@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-// Decorative motion layer behind the trip pages: waves, leaves, snow or sun depending on the trip's mood.
-// It sits under the paper (z-index -1), never catches clicks and is hidden from assistive technology.
+// Decorative motion layer over the trip pages: waves, leaves, snow or sun depending on the trip's mood.
+// It covers most of the page as a translucent veil, never catches clicks and is hidden from assistive technology.
 
 export const AMBIENCE_LABELS = { vagues: 'Vagues', feuilles: 'Feuilles', neige: 'Neige', soleil: 'Soleil' };
 
@@ -45,9 +45,9 @@ function particles(count) {
   }));
 }
 
-const LEAVES = particles(18);
-const FLAKES = particles(42);
-const SPARKS = particles(9);
+const LEAVES = particles(26);
+const FLAKES = particles(70);
+const SPARKS = particles(16);
 
 function Leaf() {
   return (
@@ -85,13 +85,15 @@ function wavePath(height, amplitude, wavelength, periods) {
 }
 
 function Waves() {
-  const layers = [['back', 26, 480], ['mid', 18, 360], ['front', 12, 240]];
+  const layers = [['back', 50, 720], ['mid', 36, 480], ['front', 26, 360]];
   return (
     <div className="ambience-waves">
       {layers.map(([name, amplitude, wavelength]) => (
-        <svg key={name} className={`wave wave-${name}`} viewBox="0 0 2880 120" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-          <path d={wavePath(120, amplitude, wavelength, 2880 / wavelength)} />
-        </svg>
+        <div key={name} className={`wave-layer wave-${name}`}>
+          <svg className="wave" viewBox="0 0 2880 600" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path d={wavePath(600, amplitude, wavelength, 2880 / wavelength)} />
+          </svg>
+        </div>
       ))}
     </div>
   );

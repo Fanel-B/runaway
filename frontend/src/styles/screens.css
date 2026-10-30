@@ -131,16 +131,22 @@
 .mood:has(input:checked) .mood-label::after { content: ' ✓'; }
 .mood:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 3px; }
 
-/* ---------- Trip ambience: decorative motion under the paper ---------- */
-.ambience { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+/* ---------- Trip ambience: a translucent veil over most of the page ---------- */
+/* Multiply keeps it ink-on-paper: text underneath only gets darker, never washed out. */
+.ambience { position: fixed; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; mix-blend-mode: multiply; }
 .ambience[data-paused] *, .ambience[data-paused] { animation-play-state: paused !important; }
 
-.ambience-waves { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(80px, 15vh, 150px); }
-.wave { position: absolute; left: 0; bottom: 0; width: 200%; height: 100%; animation: wave-slide linear infinite; }
-.wave-back { height: 100%; fill: var(--cobalt-soft); opacity: 0.45; animation-duration: 26s; }
-.wave-mid { height: 78%; fill: var(--sky); opacity: 0.95; animation-duration: 17s; animation-direction: reverse; }
-.wave-front { height: 52%; fill: var(--cobalt); opacity: 0.16; animation-duration: 11s; }
+.ambience-waves { position: absolute; left: 0; right: 0; bottom: 0; height: 72vh; }
+.wave-layer { position: absolute; left: 0; right: 0; bottom: -4vh; animation: swell ease-in-out infinite alternate; }
+.wave { display: block; width: 200%; max-width: none; height: 100%; animation: wave-slide linear infinite; }
+.wave-back { height: 100%; animation-duration: 9s; }
+.wave-back .wave { fill: var(--sky); opacity: 0.5; animation-duration: 30s; }
+.wave-mid { height: 74%; animation-duration: 7s; animation-delay: -3s; }
+.wave-mid .wave { fill: var(--cobalt-soft); opacity: 0.16; animation-duration: 19s; animation-direction: reverse; }
+.wave-front { height: 46%; animation-duration: 5.5s; animation-delay: -1s; }
+.wave-front .wave { fill: var(--cobalt); opacity: 0.05; animation-duration: 12s; }
 @keyframes wave-slide { to { transform: translateX(-50%); } }
+@keyframes swell { from { transform: translateY(0); } to { transform: translateY(-3.5vh); } }
 
 .ambience-particles .particle {
   position: absolute; top: 0; width: calc(10px + var(--size) * 18px);
@@ -156,33 +162,36 @@
   from { transform: translateX(-18px) rotate(-35deg); }
   to { transform: translateX(18px) rotate(40deg); }
 }
-.leaves .particle { width: calc(20px + var(--size) * 20px); }
+.leaves .particle { width: calc(22px + var(--size) * 26px); opacity: 0.55; }
 .leaves .tone-0 svg { fill: var(--coral); }
 .leaves .tone-1 svg { fill: var(--sun); }
 .leaves .tone-2 svg { fill: #9DBB91; }
 .leaves .leaf-vein { fill: none; stroke: rgba(24, 57, 47, 0.35); stroke-width: 1.2; stroke-linecap: round; }
+.ambience-feuilles { background: linear-gradient(to bottom, rgba(244, 203, 84, 0.08), rgba(239, 114, 91, 0.1)); }
 
-.snow .particle { width: calc(6px + var(--size) * 10px); }
+.snow .particle { width: calc(6px + var(--size) * 12px); opacity: 0.7; }
 .snow .particle-inner { animation-name: snow-sway; }
 @keyframes snow-sway { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
-.flake-dot { display: block; aspect-ratio: 1; border-radius: 50%; background: var(--cobalt-soft); opacity: 0.9; }
-.snow .tone-1 .flake-dot { background: #fff; box-shadow: 0 0 0 1px rgba(49, 85, 231, 0.25); }
+.flake-dot { display: block; aspect-ratio: 1; border-radius: 50%; background: var(--cobalt-soft); }
+.snow .tone-1 .flake-dot { background: #C9D2F9; }
 .snow svg { fill: none; stroke: var(--cobalt-soft); stroke-width: 2.2; stroke-linecap: round; }
-.snow .particle:has(svg) { width: calc(14px + var(--size) * 10px); }
+.snow .particle:has(svg) { width: calc(16px + var(--size) * 12px); }
+.ambience-neige { background: linear-gradient(to bottom, rgba(174, 187, 246, 0.22), rgba(220, 227, 251, 0.1) 70%); }
 
-.ambience-sun { position: absolute; top: -110px; right: -110px; width: clamp(260px, 34vw, 440px); opacity: 0.55; }
+.ambience-soleil { background: radial-gradient(circle at 92% 6%, rgba(244, 203, 84, 0.34), rgba(249, 214, 202, 0.18) 45%, rgba(249, 214, 202, 0) 80%); }
+.ambience-sun { position: absolute; top: -22vmin; right: -22vmin; width: clamp(360px, 80vmin, 860px); opacity: 0.26; }
 .sun-rays { stroke: var(--sun); stroke-width: 9; stroke-linecap: round; transform-origin: 200px 200px; animation: sun-turn 60s linear infinite; }
 .sun-halo { fill: none; stroke: var(--sun); stroke-width: 2; stroke-dasharray: 2 12; }
 .sun-core { fill: var(--sun); animation: sun-glow 6s ease-in-out infinite alternate; transform-origin: 200px 200px; }
 @keyframes sun-turn { to { transform: rotate(360deg); } }
 @keyframes sun-glow { to { transform: scale(1.06); } }
-.sparks .particle { top: auto; bottom: 0; width: calc(10px + var(--size) * 10px); animation-name: rise; }
+.sparks .particle { top: auto; bottom: 0; width: calc(12px + var(--size) * 14px); animation-name: rise; }
 .sparks svg { fill: var(--sun); }
 .sparks .tone-1 svg { fill: var(--coral); opacity: 0.7; }
 @keyframes rise {
   0% { transform: translate3d(0, 10vh, 0) scale(0.6); opacity: 0; }
   20% { opacity: 0.9; }
-  100% { transform: translate3d(var(--drift), -80vh, 0) scale(1.1); opacity: 0; }
+  100% { transform: translate3d(var(--drift), -95vh, 0) scale(1.1); opacity: 0; }
 }
 
 /* The cover illustration breathes a little too. */

@@ -81,14 +81,14 @@ Un oiseau vu de loin, dessiné en deux arcs (`BirdMark` dans `Chrome.jsx`), comm
 
 ## Ambiance animée
 
-Inspirée du mouvement ambiant de Q’in Saba : une couche décorative fixe (`Ambience.jsx`) passe **sous** le papier (`z-index: -1`). On la voit dans les marges crème, jamais par-dessus le texte des encarts. Elle ne capte aucun clic et elle est masquée aux technologies d’assistance.
+Inspirée du mouvement ambiant de Q’in Saba : une couche décorative fixe (`Ambience.jsx`) couvre presque toute la page, **par-dessus** le contenu, comme un voile transparent. Elle est fusionnée en `mix-blend-mode: multiply`, comme de l’encre sur du papier : elle teinte le fond sans jamais éclaircir le texte, qui reste lisible. Elle ne capte aucun clic (`pointer-events: none`), passe sous les toasts et les dialogues, et elle est masquée aux technologies d’assistance.
 
 | Ambiance | Quand | Effet |
 | --- | --- | --- |
-| Vagues | style « Au bord de l’eau » | trois couches de vagues qui glissent en bas de l’écran à des vitesses différentes |
-| Neige | départ en décembre, janvier ou février (sauf bord de l’eau) | flocons cobalt pâle et blancs qui tombent en oscillant |
-| Feuilles | style « Grands espaces » hors hiver | feuilles corail, soleil et sauge qui tombent en tournoyant |
-| Soleil | « Ville et culture », « Un peu de tout » hors hiver | soleil en haut à droite, rayons qui tournent lentement, éclats qui montent |
+| Vagues | style « Au bord de l’eau » | trois couches de vagues transparentes sur les trois quarts bas de l’écran, qui glissent et montent comme une houle |
+| Neige | départ en décembre, janvier ou février (sauf bord de l’eau) | voile froid du haut vers le bas, flocons cobalt pâle qui tombent en oscillant sur toute la page |
+| Feuilles | style « Grands espaces » hors hiver | voile chaud, feuilles corail, soleil et sauge qui tombent en tournoyant sur toute la page |
+| Soleil | « Ville et culture », « Un peu de tout » hors hiver | halo chaud sur toute la page, grand soleil en haut à droite dont les rayons tournent lentement, éclats qui montent |
 
 Les vagues et les oiseaux de l’illustration de couverture bougent aussi légèrement. Un bouton sur la couverture met l’ambiance en pause (WCAG 2.2.2), et ce choix est mémorisé dans le navigateur. Si le système demande moins de mouvement, les particules disparaissent et les vagues ou le soleil restent immobiles. L’ambiance n’apparaît pas à l’impression.
 

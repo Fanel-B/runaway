@@ -7,7 +7,7 @@ Chaque entrée indique ce qui a changé, pourquoi, les fichiers concernés, comm
 ### Changements
 
 - **Logo** : un oiseau lointain en deux arcs remplace la flèche ↗, dans l’en-tête et le pied de page. Il bat des ailes au survol. Il sert aussi de favicon (`frontend/public/favicon.svg`).
-- **Ambiance du voyage**, inspirée de Q’in Saba : vagues, feuilles, neige ou soleil selon le style et le mois de départ. La couche passe sous le papier, ne capte pas les clics et est masquée aux lecteurs d’écran. Un bouton de la couverture met l’animation en pause, et ce choix est mémorisé. Si le système demande moins de mouvement, les particules disparaissent. L’ambiance n’apparaît pas à l’impression. Règles détaillées dans `docs/DIRECTION_ARTISTIQUE.md`.
+- **Ambiance du voyage**, inspirée de Q’in Saba : vagues, feuilles, neige ou soleil selon le style et le mois de départ. La couche couvre presque toute la page comme un voile transparent, par-dessus le contenu. Elle est fusionnée en `multiply` : elle teinte le fond sans éclaircir le texte. Elle ne capte pas les clics et est masquée aux lecteurs d’écran. Un bouton de la couverture met l’animation en pause, et ce choix est mémorisé. Si le système demande moins de mouvement, les particules disparaissent. L’ambiance n’apparaît pas à l’impression. Règles détaillées dans `docs/DIRECTION_ARTISTIQUE.md`.
 - La couverture illustrée s’anime légèrement : les vagues ondulent et les oiseaux planent.
 
 Fichiers : `frontend/src/components/Ambience.jsx` (nouveau), `Chrome.jsx`, `TripView.jsx`, `Landscape.jsx`, `frontend/src/styles/screens.css`, `frontend/index.html`, `frontend/public/favicon.svg`.
@@ -17,11 +17,14 @@ Fichiers : `frontend/src/components/Ambience.jsx` (nouveau), `Chrome.jsx`, `Trip
 - `npm run build` : réussi.
 - Parcours navigateur complet relancé : **30 vérifications sur 30 réussies**, dont l’absence de débordement à 390 et 768 px et le mouvement réduit.
 - Captures relues pour les quatre ambiances (vagues à 1440 et 390 px, neige, feuilles, soleil à 1440 px).
-- Bouton de pause vérifié dans Chrome : l’animation passe de `running` à `paused`, le choix est enregistré, et la couche reste à `z-index: -1` sans capter les clics.
+- Bouton de pause vérifié dans Chrome : l’animation passe de `running` à `paused` et le choix est enregistré. La couche est à `z-index: 30` avec `pointer-events: none`.
+- Contraste : calculé à la main pour le texte gris secondaire là où les trois vagues se superposent, environ 5:1 (le minimum est 4,5:1). Pas de mesure automatique.
 
 ### Limites
 
 - L’ambiance est choisie à partir du style et du mois de départ, pas de la météo réelle.
+- Les vagues donnent aux encarts jaunes une teinte plus verte, l’effet d’une eau peu profonde. C’est voulu, mais à rediscuter si cela gêne.
+- Le parcours navigateur déclenche les clics en JavaScript, pas avec une vraie souris. Les clics à travers le voile reposent sur `pointer-events: none`.
 - Pas encore testé sur un téléphone réel ni dans Safari, qui peut gérer différemment les animations des éléments fixes.
 
 ## 30 octobre 2026 — Vérification complète et corrections
