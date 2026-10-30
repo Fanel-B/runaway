@@ -9,6 +9,7 @@ Chaque entrée indique ce qui a changé, pourquoi, les fichiers concernés, comm
 - **Logo** : un oiseau lointain en deux arcs remplace la flèche ↗, dans l’en-tête et le pied de page. Il bat des ailes au survol. Il sert aussi de favicon (`frontend/public/favicon.svg`).
 - **Ambiance du voyage**, inspirée de Q’in Saba : vagues, feuilles, neige ou soleil selon le style et le mois de départ. La couche couvre presque toute la page comme un voile transparent, par-dessus le contenu. Elle est fusionnée en `multiply` : elle teinte le fond sans éclaircir le texte. Elle ne capte pas les clics et est masquée aux lecteurs d’écran. Un bouton de la couverture met l’animation en pause, et ce choix est mémorisé. Si le système demande moins de mouvement, les particules disparaissent. L’ambiance n’apparaît pas à l’impression. Règles détaillées dans `docs/DIRECTION_ARTISTIQUE.md`.
 - La couverture illustrée s’anime légèrement : les vagues ondulent et les oiseaux planent.
+- **Jaune adouci.** Le jaune soleil plein (`#F4CB54`) ne sert plus qu’aux petits accents. Les grandes surfaces (chapitre 1, plafond du budget, ciel « grands espaces », sable) passent au jaune doux `--sun-soft` (`#F8E2A6`). L’ambiance soleil est environ deux fois plus discrète : halo, soleil, rayons plus fins et éclats.
 
 Fichiers : `frontend/src/components/Ambience.jsx` (nouveau), `Chrome.jsx`, `TripView.jsx`, `Landscape.jsx`, `frontend/src/styles/screens.css`, `frontend/index.html`, `frontend/public/favicon.svg`.
 

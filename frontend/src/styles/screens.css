@@ -7,6 +7,7 @@
 .landscape { width: 100%; height: 100%; }
 .ls-fill-rose { fill: var(--rose); }
 .ls-fill-sun { fill: var(--sun); }
+.ls-fill-sun-soft { fill: var(--sun-soft); }
 .ls-fill-sage { fill: var(--sage); }
 .ls-fill-sky { fill: var(--sky); }
 .ls-fill-cream { fill: var(--cream); }
@@ -19,7 +20,7 @@
 .ls-route { stroke: var(--cream); }
 
 .sky-equilibre { background: var(--rose); }
-.sky-nature { background: var(--sun); }
+.sky-nature { background: var(--sun-soft); }
 .sky-plage { background: var(--sky); }
 .sky-culture { background: var(--sage); }
 .sky-equilibre, .sky-nature, .sky-plage, .sky-culture { --muted: var(--ink-soft); }
@@ -99,7 +100,7 @@
 .chapter-card { padding: clamp(28px, 4vw, 56px) clamp(20px, 3vw, 44px) clamp(36px, 5vw, 72px); --muted: var(--ink-soft); }
 .chapter-card p { max-width: 30ch; margin-top: var(--s-3); }
 .chapter-number { display: block; font-family: var(--font-display); font-size: clamp(4rem, 8vw, 7rem); font-weight: 300; line-height: 0.9; margin-bottom: var(--s-4); }
-.chapter-sun { background: var(--sun); }
+.chapter-sun { background: var(--sun-soft); }
 .chapter-rose { background: var(--rose); padding-top: clamp(48px, 7vw, 96px); }
 .chapter-sage { background: var(--sage); }
 
@@ -164,10 +165,10 @@
 }
 .leaves .particle { width: calc(22px + var(--size) * 26px); opacity: 0.55; }
 .leaves .tone-0 svg { fill: var(--coral); }
-.leaves .tone-1 svg { fill: var(--sun); }
+.leaves .tone-1 svg { fill: #F1D27A; }
 .leaves .tone-2 svg { fill: #9DBB91; }
 .leaves .leaf-vein { fill: none; stroke: rgba(24, 57, 47, 0.35); stroke-width: 1.2; stroke-linecap: round; }
-.ambience-feuilles { background: linear-gradient(to bottom, rgba(244, 203, 84, 0.08), rgba(239, 114, 91, 0.1)); }
+.ambience-feuilles { background: linear-gradient(to bottom, rgba(244, 203, 84, 0.04), rgba(239, 114, 91, 0.06)); }
 
 .snow .particle { width: calc(6px + var(--size) * 12px); opacity: 0.7; }
 .snow .particle-inner { animation-name: snow-sway; }
@@ -178,14 +179,14 @@
 .snow .particle:has(svg) { width: calc(16px + var(--size) * 12px); }
 .ambience-neige { background: linear-gradient(to bottom, rgba(174, 187, 246, 0.22), rgba(220, 227, 251, 0.1) 70%); }
 
-.ambience-soleil { background: radial-gradient(circle at 92% 6%, rgba(244, 203, 84, 0.34), rgba(249, 214, 202, 0.18) 45%, rgba(249, 214, 202, 0) 80%); }
-.ambience-sun { position: absolute; top: -22vmin; right: -22vmin; width: clamp(360px, 80vmin, 860px); opacity: 0.26; }
-.sun-rays { stroke: var(--sun); stroke-width: 9; stroke-linecap: round; transform-origin: 200px 200px; animation: sun-turn 60s linear infinite; }
+.ambience-soleil { background: radial-gradient(circle at 92% 6%, rgba(244, 203, 84, 0.13), rgba(249, 214, 202, 0.08) 45%, rgba(249, 214, 202, 0) 80%); }
+.ambience-sun { position: absolute; top: -22vmin; right: -22vmin; width: clamp(360px, 80vmin, 860px); opacity: 0.13; }
+.sun-rays { stroke: var(--sun); stroke-width: 6; stroke-linecap: round; transform-origin: 200px 200px; animation: sun-turn 60s linear infinite; }
 .sun-halo { fill: none; stroke: var(--sun); stroke-width: 2; stroke-dasharray: 2 12; }
 .sun-core { fill: var(--sun); animation: sun-glow 6s ease-in-out infinite alternate; transform-origin: 200px 200px; }
 @keyframes sun-turn { to { transform: rotate(360deg); } }
 @keyframes sun-glow { to { transform: scale(1.06); } }
-.sparks .particle { top: auto; bottom: 0; width: calc(12px + var(--size) * 14px); animation-name: rise; }
+.sparks .particle { top: auto; bottom: 0; width: calc(10px + var(--size) * 12px); opacity: 0.6; animation-name: rise; }
 .sparks svg { fill: var(--sun); }
 .sparks .tone-1 svg { fill: var(--coral); opacity: 0.7; }
 @keyframes rise {
@@ -306,7 +307,7 @@
 
 /* ---------- Budget ---------- */
 .budget-top { display: flex; flex-wrap: wrap; gap: var(--s-5); align-items: flex-end; justify-content: space-between; margin-bottom: var(--s-4); }
-.ceiling-block { background: var(--sun); padding: var(--s-5) var(--s-6); border-radius: var(--radius-l); max-width: 30rem; --muted: var(--ink-soft); }
+.ceiling-block { background: var(--sun-soft); padding: var(--s-5) var(--s-6); border-radius: var(--radius-l); max-width: 30rem; --muted: var(--ink-soft); }
 .view-toggle { border: 0; padding: 0; margin: 0; }
 .view-toggle legend { font-weight: 650; font-size: 0.9rem; margin-bottom: var(--s-2); padding: 0; }
 .scenarios { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); margin-top: var(--s-5); }

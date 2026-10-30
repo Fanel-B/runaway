@@ -12,13 +12,14 @@
   --coral: #EF725B;
   --coral-ink: #B2432F;
   --sun: #F4CB54;
+  --sun-soft: #F8E2A6; /* large yellow surfaces: the full yellow stays for small accents */
   --rose: #EFCBDD;
   --sage: #C6D7BE;
   --sky: #DCE3FB;
   --peach: #F9D6CA;
 
   /* Decorative day surfaces: never used to signal success or failure. */
-  --day-sun: #F4CB54;
+  --day-sun: var(--sun-soft);
   --day-rose: #EFCBDD;
   --day-sage: #C6D7BE;
   --day-sky: #DCE3FB;

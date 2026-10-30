@@ -66,7 +66,7 @@ function Nature() {
   const pines = [[200, 262, 14], [228, 270, 11], [1100, 262, 15], [1130, 268, 11], [1160, 262, 13]];
   return (
     <>
-      <rect width="1440" height="420" className="ls-fill-sun" />
+      <rect width="1440" height="420" className="ls-fill-sun-soft" />
       <circle cx="360" cy="150" r="100" className="ls-fill-cream" />
       <Birds x={620} y={60} />
       <path d="M0 260 L160 150 L260 210 L420 80 L560 220 L700 140 L820 230 L990 90 L1130 210 L1250 150 L1440 240 V420 H0Z" className="ls-fill-cobalt" />
@@ -90,7 +90,7 @@ function Plage() {
       <Waves rows={[[420, 250], [600, 280], [800, 245], [1000, 270], [1200, 300], [700, 320]]} />
       <Boat x={760} y={262} />
       <path d="M0 140 C 90 130, 170 150, 220 200 C 260 240, 250 300, 290 420 H0Z" className="ls-fill-ink" />
-      <path d="M0 360 C 300 320, 600 330, 900 350 S 1260 360, 1440 340 V420 H0Z" className="ls-fill-sun" />
+      <path d="M0 360 C 300 320, 600 330, 900 350 S 1260 360, 1440 340 V420 H0Z" className="ls-fill-sun-soft" />
       <path d="M980 300 L984 360" className="ls-stroke-ink" strokeWidth="4" strokeLinecap="round" />
       <path d="M928 306 Q980 258 1032 306Z" className="ls-fill-coral" />
       <path d="M980 268 L962 306 M980 268 L998 306" className="ls-stroke-cream" strokeWidth="4" />

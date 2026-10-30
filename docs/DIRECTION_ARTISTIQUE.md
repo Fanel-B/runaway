@@ -24,7 +24,8 @@ Les couleurs sont centralisées dans `frontend/src/styles/tokens.css`.
 | Cobalt | `--cobalt` | `#3155E7` | Action principale (texte blanc, contraste ≈ 5,9:1), focus, partage |
 | Corail | `--coral` | `#EF725B` | **Décor uniquement** (soleil, repères de parcours), jamais du texte |
 | Corail encre | `--coral-ink` | `#B2432F` | Texte corail : titres en italique, annotations (≈ 5,3:1 sur crème) |
-| Jaune soleil | `--sun` | `#F4CB54` | Plafond du budget, chapitre 1, ciel « grands espaces » |
+| Jaune soleil | `--sun` | `#F4CB54` | Petits accents seulement : pastilles, soleils des illustrations, logo du pied de page |
+| Jaune doux | `--sun-soft` | `#F8E2A6` | Grandes surfaces jaunes : chapitre 1, plafond du budget, ciel « grands espaces », sable |
 | Rose pâle | `--rose` | `#EFCBDD` | Accueil, chapitre 2 |
 | Vert sauge | `--sage` | `#C6D7BE` | Export, chapitre 3, ciel « ville » |
 | Ciel | `--sky` | `#DCE3FB` | Ciel « bord de l’eau », journée 4 |
@@ -88,7 +89,7 @@ Inspirée du mouvement ambiant de Q’in Saba : une couche décorative fixe (`Am
 | Vagues | style « Au bord de l’eau » | trois couches de vagues transparentes sur les trois quarts bas de l’écran, qui glissent et montent comme une houle |
 | Neige | départ en décembre, janvier ou février (sauf bord de l’eau) | voile froid du haut vers le bas, flocons cobalt pâle qui tombent en oscillant sur toute la page |
 | Feuilles | style « Grands espaces » hors hiver | voile chaud, feuilles corail, soleil et sauge qui tombent en tournoyant sur toute la page |
-| Soleil | « Ville et culture », « Un peu de tout » hors hiver | halo chaud sur toute la page, grand soleil en haut à droite dont les rayons tournent lentement, éclats qui montent |
+| Soleil | « Ville et culture », « Un peu de tout » hors hiver | halo chaud très léger sur toute la page, grand soleil pâle en haut à droite dont les rayons tournent lentement, quelques éclats qui montent |
 
 Les vagues et les oiseaux de l’illustration de couverture bougent aussi légèrement. Un bouton sur la couverture met l’ambiance en pause (WCAG 2.2.2), et ce choix est mémorisé dans le navigateur. Si le système demande moins de mouvement, les particules disparaissent et les vagues ou le soleil restent immobiles. L’ambiance n’apparaît pas à l’impression.
 
