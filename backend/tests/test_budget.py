@@ -23,6 +23,20 @@ def test_round_only_after_sum():
     assert calculate_budget(items, 3, 1000)["scenarios"]["central"]["known_total_cents"] == 108
 
 
+def test_group_total_rounds_once_from_unrounded_subtotal():
+    result = calculate_budget([CostItem("Gîte", 10000, 10000, 10000, True)], 3, 5000)
+    central = result["scenarios"]["central"]
+    assert central["known_total_cents"] == 3600
+    assert central["group_known_total_cents"] == 10800
+    assert result["group_ceiling_cents"] == 15000
+
+
+def test_explicit_zero_is_known_but_none_is_missing():
+    result = calculate_budget([CostItem("Activités", 0, 0, 0), CostItem("Repas", None, 100, 100)], 1, 1000)
+    assert result["scenarios"]["central"]["complete"] is True
+    assert result["scenarios"]["low"]["missing_items"] == ["Repas"]
+
+
 def test_empty_catalog_is_not_complete():
     assert calculate_budget([], 3, 45000)["scenarios"]["central"]["within_budget"] is None
 
