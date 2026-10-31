@@ -57,7 +57,6 @@ class SlidingWindowLimiter:
         return max(1, int(hits[0] + self.window - now) + 1)
 
     def _forget_idle(self, now: float) -> None:
-        # Bounded memory: drop clients whose window is empty.
-        if len(self._hits) > 1000:
-            for key in [k for k, v in self._hits.items() if not v or v[-1] <= now - self.window]:
-                del self._hits[key]
+        # Clients whose window is over are forgotten at the next creation (or on restart).
+        for key in [k for k, v in self._hits.items() if not v or v[-1] <= now - self.window]:
+            del self._hits[key]

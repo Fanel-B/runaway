@@ -174,3 +174,12 @@ def test_redaction_masks_anything_secret_looking():
     text = redact(f"Authorization: Bearer abc.def token=Zm9vYmFyYmF6cXV4cXV1eGNvcmdlZ3JhdWx0Z2FycGx5 hash={digest}")
     assert "abc.def" not in text and digest not in text and "Zm9vYmFy" not in text
     assert redact("/trips/11111111-1111-1111-1111-111111111111") == "/trips/11111111-1111-1111-1111-111111111111"
+
+
+def test_client_addresses_are_forgotten_after_the_window():
+    clock = Clock()
+    limiter = SlidingWindowLimiter(per_key=5, global_limit=50, window_seconds=60, clock=clock)
+    limiter.acquire("203.0.113.7")
+    clock.now += 61
+    limiter.acquire("198.51.100.2")
+    assert "203.0.113.7" not in limiter._hits

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../lib/api.js';
 import { DEPARTURES, STYLES, dateRange } from '../lib/format.js';
 import { go, tripHash } from '../lib/route.js';
@@ -13,10 +13,13 @@ const CHAPTERS = [
   ['03', 'Carnet', 'Un lien de lecture pour les amis, l’export, l’impression et le résumé de ce qui est verrouillé.', 'chapter-sage'],
 ];
 
-export function Home({ onInspiration }) {
+export function Home({ onInspiration, flash = '', onFlashDone }) {
   const [recent, setRecent] = useState(listTrips);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Shown for this visit only: the app-level message is consumed on arrival.
+  const [notice] = useState(flash);
+  useEffect(() => { if (flash) onFlashDone?.(); }, [flash, onFlashDone]);
 
   async function openExample() {
     if (busy) return;
@@ -41,6 +44,7 @@ export function Home({ onInspiration }) {
     <>
       <section className="hero sky-equilibre" aria-labelledby="hero-title">
         <div className="hero-text">
+          {notice && <p className="notice notice-info" role="status"><Icon name="check" /> <span>{notice}</span></p>}
           <p className="eyebrow">Carnet d’escapades entre amis · départ de Paris ou Toulouse</p>
           <h1 id="hero-title" className="display">Des envies en vrac.<br /><em>Un départ ensemble.</em></h1>
           <p className="lead">Posez les contraintes du groupe, racontez chaque journée et gardez un budget honnête, qui montre aussi ce qu’on ne sait pas encore.</p>
