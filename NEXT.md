@@ -2,12 +2,12 @@
 
 ## Où en est le dépôt (31 octobre 2026)
 
-| Branche            | Contenu                                                                           | État                                         |
-| ------------------ | --------------------------------------------------------------------------------- | -------------------------------------------- |
-| `main`             | Commit initial, réécrit sans `Co-Authored-By` (`69c8eea`)                         | Inchangée cette nuit                         |
-| `essai`            | Tranche 2 : carnet éditable, droits, budget, identité visuelle                    | Poussée, PR vers `main` à ouvrir             |
-| `t3-fiabilisation` | Tranche 3 : API déployable, suppression, conservation, confidentialité            | Poussée, PR vers `essai` à ouvrir            |
-| `t4-outillage`     | ESLint, Prettier, lint et audit dans la CI (si présente : voir `RAPPORT_NUIT.md`) | Poussée, PR vers `t3-fiabilisation` à ouvrir |
+| Branche            | Contenu                                                                | État                                         |
+| ------------------ | ---------------------------------------------------------------------- | -------------------------------------------- |
+| `main`             | Commit initial, réécrit sans `Co-Authored-By` (`69c8eea`)              | Inchangée cette nuit                         |
+| `essai`            | Tranche 2 : carnet éditable, droits, budget, identité visuelle         | Poussée, PR vers `main` à ouvrir             |
+| `t3-fiabilisation` | Tranche 3 : API déployable, suppression, conservation, confidentialité | Poussée, PR vers `essai` à ouvrir            |
+| `t4-outillage`     | ESLint, Prettier, lint bloquant et audit en avertissement dans la CI   | Poussée, PR vers `t3-fiabilisation` à ouvrir |
 
 Les pull requests n’ont pas pu être ouvertes automatiquement (voir `RAPPORT_NUIT.md`). Leurs descriptions sont prêtes dans `docs/pull-requests/`.
 
@@ -23,6 +23,7 @@ Les pull requests n’ont pas pu être ouvertes automatiquement (voir `RAPPORT_N
   - page de confidentialité ;
   - `VITE_API_URL` pour une API sur un autre domaine ;
   - aucun tiret cadratin dans le dépôt.
+- **Tranche 4** (branche `t4-outillage`) : ESLint avec la configuration recommandée React, Prettier pour tout le dépôt, `npm run lint` bloquant et `npm audit` en avertissement dans la CI.
 
 Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 

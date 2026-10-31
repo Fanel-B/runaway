@@ -126,6 +126,10 @@ npm run build
 
 Les tests utilisent une base SQLite temporaire initialisée par les vraies migrations. Le test de migration part de la révision 0001 avec un ancien voyage. `TEST_DATABASE_URL` permet de viser une base PostgreSQL **réservée aux tests**. La CI GitHub Actions prévoit SQLite, PostgreSQL 17 et le build du frontend. Les vérifications réellement exécutées sont listées dans [JOURNAL_DES_MODIFICATIONS.md](JOURNAL_DES_MODIFICATIONS.md).
 
+### Qualité du code frontend
+
+Depuis `frontend` : `npm run lint` (ESLint, configuration recommandée React et hooks), `npm run format` pour formater tout le dépôt avec Prettier, `npm run format:check` pour vérifier sans modifier. La CI bloque sur le lint et signale `npm audit` en simple avertissement.
+
 ## Organisation
 
 ```text
