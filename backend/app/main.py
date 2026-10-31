@@ -4,20 +4,23 @@ import hmac
 import os
 import secrets
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
-from fastapi import FastAPI, Header, HTTPException, Response
+from fastapi import FastAPI, Header, HTTPException, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
-from sqlalchemy import text, update
+from sqlalchemy import or_, text, update
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import examples
 from app.budget import budget_from_lines, normalize_lines, unknown_budget
-from app.config import database_url
+from app.config import Settings, database_url
 from app.db import make_database
 from app.llm import FakeLLM, LLMClient
 from app.models import Trip
+from app.observability import configure_logging, install_request_logging, log
+from app.ratelimit import RateLimited, SlidingWindowLimiter
 from app.schemas import BudgetUpdate, Itinerary, LockUpdate, StopUpdate, StoredItinerary, TripRequest
 
 
@@ -46,7 +49,7 @@ def _role(trip: Trip | None, token_hash: str) -> str:
     raise HTTPException(404, "Voyage introuvable.")
 
 
-def _serialize(trip: Trip, role: str) -> dict:
+def _serialize(trip: Trip, role: str, retention_months: int) -> dict:
     prefs = trip.preferences
     lines = (trip.budget_inputs or {}).get("lines")
     return {
@@ -58,6 +61,7 @@ def _serialize(trip: Trip, role: str) -> dict:
         "budget": budget_from_lines(lines, prefs["travelers"], prefs["budget_cents"]),
         "budget_lines": normalize_lines(lines),
         "generator": trip.generator, "place_verification": "not_implemented",
+        "last_opened_at": trip.last_opened_at, "retention_months": retention_months,
     }
 
 
@@ -68,19 +72,48 @@ def _find_stop(itinerary: StoredItinerary, day_number: int, index: int):
     return day.stops[index]
 
 
-def create_app(url: str | None = None, llm: LLMClient | None = None) -> FastAPI:
+def create_app(url: str | None = None, llm: LLMClient | None = None, settings: Settings | None = None) -> FastAPI:
     if llm is None and os.getenv("LLM_PROVIDER", "fake") != "fake":
         raise RuntimeError("Seul LLM_PROVIDER=fake est disponible dans cette tranche.")
+    settings = settings or Settings.from_env()
+    configure_logging(settings.log_level)
     engine, sessions = make_database(url or database_url())
     generator = llm or FakeLLM()
+    limiter = SlidingWindowLimiter(settings.creations_per_ip, settings.creations_global,
+                                   settings.creation_window_seconds)
 
     @asynccontextmanager
     async def lifespan(app):
         yield
         engine.dispose()
 
-    app = FastAPI(title="Runaway", version="0.2.0", lifespan=lifespan)
+    app = FastAPI(title="Runaway", version="0.3.0", lifespan=lifespan)
     app.state.engine = engine
+    app.state.limiter = limiter
+    app.state.settings = settings
+    # Exact origins only (never "*"). No cookies: secrets travel in the Authorization header.
+    app.add_middleware(
+        CORSMiddleware, allow_origins=list(settings.cors_origins), allow_credentials=False,
+        allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE"],
+        allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+        expose_headers=["X-Request-ID"], max_age=600)
+    # Added last, so it wraps CORS too: refused preflights are logged with their request id.
+    install_request_logging(app)
+
+    def serialize(trip: Trip, role: str) -> dict:
+        return _serialize(trip, role, settings.retention_months)
+
+    def creation_slot(request: Request):
+        # The client address is used here, in memory, and never written to the logs or the database.
+        try:
+            return limiter.acquire(request.client.host if request.client else "inconnu")
+        except RateLimited as limit:
+            log.warning("rate_limited", extra={"scope": limit.scope, "retry_after": limit.retry_after})
+            minutes = max(1, round(limit.retry_after / 60))
+            message = ("Trop de voyages créés depuis cette connexion." if limit.scope == "client"
+                       else "Le service reçoit trop de créations en ce moment.")
+            raise HTTPException(429, {"code": "rate_limited", "message": f"{message} Réessayez dans {minutes} min."},
+                                headers={"Retry-After": str(limit.retry_after)}) from None
 
     def store(trip: Trip, response: Response, read_token: str, edit_token: str) -> dict:
         try:
@@ -117,7 +150,7 @@ def create_app(url: str | None = None, llm: LLMClient | None = None) -> FastAPI:
                     raise _error(409, "revision_conflict",
                                  "Le voyage a changé pendant l’enregistrement. Rechargez la dernière version.")
             with sessions() as session:
-                fresh = _serialize(session.get(Trip, str(trip_id)), "organizer")
+                fresh = serialize(session.get(Trip, str(trip_id)), "organizer")
         except SQLAlchemyError:
             raise HTTPException(503, "Sauvegarde indisponible.") from None
         response.headers["Cache-Control"] = "no-store"
@@ -137,38 +170,50 @@ def create_app(url: str | None = None, llm: LLMClient | None = None) -> FastAPI:
         return {"status": "ready"}
 
     @app.post("/trips", status_code=201)
-    def create_trip(request: TripRequest, response: Response):
+    def create_trip(request: TripRequest, response: Response, http: Request):
+        # Invalid bodies are refused (422) before this point and do not use the quota.
+        release = creation_slot(http)
         try:
-            itinerary = Itinerary.model_validate_json(generator.generate(request))
-            if [day.number for day in itinerary.days] != list(range(1, request.day_count + 1)):
-                raise ValueError("Le programme ne respecte pas les dates.")
-        except (ValidationError, ValueError):
-            raise HTTPException(502, "Le générateur a renvoyé un programme invalide. Aucun voyage enregistré.") from None
-        except TimeoutError:
-            raise HTTPException(504, "Le générateur n’a pas répondu. Réessayez plus tard.") from None
+            try:
+                itinerary = Itinerary.model_validate_json(generator.generate(request))
+                if [day.number for day in itinerary.days] != list(range(1, request.day_count + 1)):
+                    raise ValueError("Le programme ne respecte pas les dates.")
+            except (ValidationError, ValueError):
+                raise HTTPException(502, "Le générateur a renvoyé un programme invalide. Aucun voyage enregistré.") from None
+            except TimeoutError:
+                raise HTTPException(504, "Le générateur n’a pas répondu. Réessayez plus tard.") from None
 
-        read_token, edit_token, hashes = new_secrets()
-        trip = Trip(
-            **hashes,
-            preferences=request.model_dump(mode="json"),
-            itinerary=StoredItinerary.model_validate(itinerary.model_dump()).model_dump(mode="json"),
-            budget=unknown_budget(request.travelers, request.budget_cents),
-            generator=generator.name,
-        )
-        return store(trip, response, read_token, edit_token)
+            read_token, edit_token, hashes = new_secrets()
+            trip = Trip(
+                **hashes,
+                preferences=request.model_dump(mode="json"),
+                itinerary=StoredItinerary.model_validate(itinerary.model_dump()).model_dump(mode="json"),
+                budget=unknown_budget(request.travelers, request.budget_cents),
+                generator=generator.name,
+            )
+            return store(trip, response, read_token, edit_token)
+        except Exception:
+            # Nothing was stored: the attempt does not count.
+            release()
+            raise
 
     @app.post("/trips/example", status_code=201)
-    def create_example(response: Response):
-        prefs = TripRequest.model_validate(examples.PREFERENCES).model_dump(mode="json")
-        read_token, edit_token, hashes = new_secrets()
-        trip = Trip(
-            **hashes, is_example=True, preferences=prefs,
-            itinerary=StoredItinerary.model_validate(copy.deepcopy(examples.ITINERARY)).model_dump(mode="json"),
-            budget_inputs={"lines": copy.deepcopy(examples.BUDGET_LINES)},
-            budget=budget_from_lines(examples.BUDGET_LINES, prefs["travelers"], prefs["budget_cents"]),
-            generator="exemple",
-        )
-        return store(trip, response, read_token, edit_token)
+    def create_example(response: Response, http: Request):
+        release = creation_slot(http)
+        try:
+            prefs = TripRequest.model_validate(examples.PREFERENCES).model_dump(mode="json")
+            read_token, edit_token, hashes = new_secrets()
+            trip = Trip(
+                **hashes, is_example=True, preferences=prefs,
+                itinerary=StoredItinerary.model_validate(copy.deepcopy(examples.ITINERARY)).model_dump(mode="json"),
+                budget_inputs={"lines": copy.deepcopy(examples.BUDGET_LINES)},
+                budget=budget_from_lines(examples.BUDGET_LINES, prefs["travelers"], prefs["budget_cents"]),
+                generator="exemple",
+            )
+            return store(trip, response, read_token, edit_token)
+        except Exception:
+            release()
+            raise
 
     @app.get("/trips/{trip_id}")
     def read_trip(trip_id: UUID, response: Response, authorization: str | None = Header(default=None)):
@@ -176,11 +221,39 @@ def create_app(url: str | None = None, llm: LLMClient | None = None) -> FastAPI:
         try:
             with sessions() as session:
                 trip = session.get(Trip, str(trip_id))
-                result = _serialize(trip, _role(trip, token_hash))
+                result = serialize(trip, _role(trip, token_hash))
         except SQLAlchemyError:
             raise HTTPException(503, "Lecture indisponible.") from None
+        touch_opened(str(trip_id))
         response.headers["Cache-Control"] = "no-store"
         return result
+
+    def touch_opened(trip_id: str) -> None:
+        # At most one write a day per trip; never changes the revision.
+        now = datetime.now(timezone.utc)
+        try:
+            with sessions.begin() as session:
+                session.execute(
+                    update(Trip).where(Trip.id == trip_id, or_(Trip.last_opened_at.is_(None),
+                                                               Trip.last_opened_at < now - timedelta(days=1)))
+                    .values(last_opened_at=now).execution_options(synchronize_session=False))
+        except SQLAlchemyError:
+            # Reading must not fail because the retention date could not be refreshed.
+            log.warning("last_opened_not_updated")
+
+    @app.delete("/trips/{trip_id}", status_code=204)
+    def delete_trip(trip_id: UUID, authorization: str | None = Header(default=None)):
+        token_hash = _bearer(authorization)
+        try:
+            with sessions.begin() as session:
+                trip = session.get(Trip, str(trip_id))
+                if _role(trip, token_hash) != "organizer":
+                    raise _error(403, "read_only", "Seul l’organisateur peut supprimer ce voyage.")
+                session.delete(trip)
+        except SQLAlchemyError:
+            raise HTTPException(503, "Suppression indisponible. Rien n’a été effacé.") from None
+        log.info("trip_deleted")
+        return Response(status_code=204, headers={"Cache-Control": "no-store"})
 
     @app.patch("/trips/{trip_id}/days/{day}/stops/{index}")
     def edit_stop(trip_id: UUID, day: int, index: int, body: StopUpdate, response: Response,
