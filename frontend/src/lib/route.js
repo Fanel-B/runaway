@@ -7,7 +7,12 @@ function parse() {
   if (raw === 'confidentialite') return { page: 'privacy' };
   const params = new URLSearchParams(raw);
   if (params.get('trip')) {
-    return { page: 'trip', id: params.get('trip'), key: params.get('key'), readerView: params.get('vue') === 'lecture' };
+    return {
+      page: 'trip',
+      id: params.get('trip'),
+      key: params.get('key'),
+      readerView: params.get('vue') === 'lecture',
+    };
   }
   return { page: 'home' };
 }

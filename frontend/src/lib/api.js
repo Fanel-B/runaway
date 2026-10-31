@@ -37,21 +37,36 @@ export async function api(path, { method = 'GET', token, body } = {}) {
   if (token) headers.Authorization = `Bearer ${token}`;
   let response;
   try {
-    response = await fetch(`${BASE}${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+    response = await fetch(`${BASE}${path}`, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
   } catch {
     throw new ApiError('Serveur injoignable. Vérifiez que l’API est lancée, puis réessayez.');
   }
   let data = null;
-  try { data = await response.json(); } catch { /* empty or non-JSON body */ }
+  try {
+    data = await response.json();
+  } catch {
+    /* empty or non-JSON body */
+  }
   if (!response.ok) {
     const detail = data?.detail;
     if (Array.isArray(detail)) {
-      throw new ApiError('Certaines informations sont à corriger.', { status: response.status, code: 'validation', fields: parseValidation(detail) });
+      throw new ApiError('Certaines informations sont à corriger.', {
+        status: response.status,
+        code: 'validation',
+        fields: parseValidation(detail),
+      });
     }
     if (detail && typeof detail === 'object') {
       throw new ApiError(detail.message, { status: response.status, code: detail.code });
     }
-    const fallback = response.status >= 500 ? 'Le serveur rencontre un problème. Votre saisie est conservée : réessayez.' : 'Une erreur est survenue. Réessayez.';
+    const fallback =
+      response.status >= 500
+        ? 'Le serveur rencontre un problème. Votre saisie est conservée : réessayez.'
+        : 'Une erreur est survenue. Réessayez.';
     throw new ApiError(typeof detail === 'string' ? detail : fallback, { status: response.status });
   }
   return data;

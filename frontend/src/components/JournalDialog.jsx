@@ -18,23 +18,43 @@ function Markdown({ source }) {
   const flush = () => {
     if (paragraph.length) blocks.push(<p key={blocks.length}>{inline(paragraph.join(' '))}</p>);
     paragraph = [];
-    if (list) blocks.push(<ul key={blocks.length}>{list.map((item, i) => <li key={i}>{inline(item)}</li>)}</ul>);
+    if (list)
+      blocks.push(
+        <ul key={blocks.length}>
+          {list.map((item, i) => (
+            <li key={i}>{inline(item)}</li>
+          ))}
+        </ul>,
+      );
     list = null;
   };
   for (const line of source.split(/\r?\n/)) {
     if (code) {
-      if (line.startsWith('```')) { blocks.push(<pre key={blocks.length}><code>{code.join('\n')}</code></pre>); code = null; }
-      else code.push(line);
+      if (line.startsWith('```')) {
+        blocks.push(
+          <pre key={blocks.length}>
+            <code>{code.join('\n')}</code>
+          </pre>,
+        );
+        code = null;
+      } else code.push(line);
       continue;
     }
-    if (line.startsWith('```')) { flush(); code = []; continue; }
+    if (line.startsWith('```')) {
+      flush();
+      code = [];
+      continue;
+    }
     const heading = line.match(/^(#{1,4})\s+(.*)/);
     if (heading) {
       flush();
       const Tag = `h${Math.min(heading[1].length + 2, 6)}`;
       blocks.push(<Tag key={blocks.length}>{inline(heading[2])}</Tag>);
     } else if (/^\s*[-*]\s+/.test(line)) {
-      if (paragraph.length) { blocks.push(<p key={blocks.length}>{inline(paragraph.join(' '))}</p>); paragraph = []; }
+      if (paragraph.length) {
+        blocks.push(<p key={blocks.length}>{inline(paragraph.join(' '))}</p>);
+        paragraph = [];
+      }
       (list ||= []).push(line.replace(/^\s*[-*]\s+/, ''));
     } else if (!line.trim()) {
       flush();
@@ -59,9 +79,19 @@ export function JournalDialog({ open, onClose }) {
   }, [open, source]);
   return (
     <Dialog open={open} onClose={onClose} title="Journal des modifications" eyebrow="Coulisses du projet" wide>
-      <p className="muted">Ce que j’ai changé, pourquoi, et ce qui a réellement été vérifié. Fichier source : <code>JOURNAL_DES_MODIFICATIONS.md</code>.</p>
-      {failed ? <p className="notice notice-danger" role="alert">Le journal n’a pas pu être chargé.</p>
-        : source ? <Markdown source={source} /> : <p className="muted">Chargement du journal…</p>}
+      <p className="muted">
+        Ce que j’ai changé, pourquoi, et ce qui a réellement été vérifié. Fichier source :{' '}
+        <code>JOURNAL_DES_MODIFICATIONS.md</code>.
+      </p>
+      {failed ? (
+        <p className="notice notice-danger" role="alert">
+          Le journal n’a pas pu être chargé.
+        </p>
+      ) : source ? (
+        <Markdown source={source} />
+      ) : (
+        <p className="muted">Chargement du journal…</p>
+      )}
     </Dialog>
   );
 }

@@ -8,16 +8,28 @@ export const STYLES = {
 };
 
 export const CATEGORIES = {
-  visite: 'Visite', activite: 'Activité', temps_libre: 'Temps libre', repas: 'Repas', trajet: 'Trajet',
+  visite: 'Visite',
+  activite: 'Activité',
+  temps_libre: 'Temps libre',
+  repas: 'Repas',
+  trajet: 'Trajet',
 };
 
 export const MOMENTS = [
-  ['matin', 'Matin'], ['midi', 'Midi'], ['apres_midi', 'Après-midi'], ['soir', 'Soir'],
+  ['matin', 'Matin'],
+  ['midi', 'Midi'],
+  ['apres_midi', 'Après-midi'],
+  ['soir', 'Soir'],
 ];
 
 const euroFormats = {
   0: new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }),
-  2: new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+  2: new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }),
 };
 
 export function euros(cents) {
@@ -43,8 +55,18 @@ function utcDate(iso) {
   return new Date(Date.UTC(y, m - 1, d));
 }
 
-const dayFormat = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', timeZone: 'UTC' });
-const fullFormat = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const dayFormat = new Intl.DateTimeFormat('fr-FR', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'UTC',
+});
+const fullFormat = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
 const shortFormat = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', timeZone: 'UTC' });
 
 export function dateRange(start, end) {

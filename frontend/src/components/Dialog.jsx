@@ -23,9 +23,18 @@ export function Dialog({ open, onClose, title, eyebrow, children, wide = false }
   }, [open]);
 
   return (
-    <dialog ref={ref} className={`dialog ${wide ? 'dialog-wide' : ''}`} aria-labelledby={titleId}
-      onCancel={event => { event.preventDefault(); onClose(); }}
-      onClick={event => { if (event.target === ref.current) onClose(); }}>
+    <dialog
+      ref={ref}
+      className={`dialog ${wide ? 'dialog-wide' : ''}`}
+      aria-labelledby={titleId}
+      onCancel={event => {
+        event.preventDefault();
+        onClose();
+      }}
+      onClick={event => {
+        if (event.target === ref.current) onClose();
+      }}
+    >
       {open && (
         <div className="dialog-body">
           <div className="dialog-head">
