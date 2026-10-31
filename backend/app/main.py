@@ -164,7 +164,7 @@ def create_app(url: str | None = None, llm: LLMClient | None = None, settings: S
     def ready():
         try:
             with engine.connect() as connection:
-                connection.execute(text("SELECT id, revision, edit_token_hash FROM trips LIMIT 1"))
+                connection.execute(text("SELECT id, revision, edit_token_hash, last_opened_at FROM trips LIMIT 1"))
         except SQLAlchemyError:
             raise HTTPException(503, "Base indisponible ou migrations manquantes.") from None
         return {"status": "ready"}

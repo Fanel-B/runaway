@@ -2,6 +2,82 @@
 
 Chaque entrée indique ce qui a changé, pourquoi, les fichiers concernés, comment l’essayer, ce qui a **réellement** été vérifié, et les limites qui restent.
 
+## 31 octobre 2026 : Tranche 3, API déployable, suppression et conservation
+
+Branche `t3-fiabilisation`, partie de `essai`.
+
+### A. Rendre l’API déployable
+
+**Pourquoi :** jusqu’ici l’API ne tournait que derrière le proxy Vite, sur la même origine. Pour la déployer, il faut décider qui peut l’appeler depuis un navigateur, empêcher un script de remplir la base, et pouvoir suivre une requête dans les logs sans y écrire de secret.
+
+- **CORS** : `CORS_ORIGINS` liste les origines exactes, séparées par des virgules. Une étoile, un chemin ou une origine sans `http(s)://` font échouer le démarrage. Sans valeur, aucun appel d’une autre origine n’est autorisé, ce qui suffit en local grâce au proxy. Pas de cookies (`allow_credentials=False`) : les secrets passent dans l’en-tête `Authorization`.
+- **Quota de créations** : `POST /trips` et `POST /trips/example` partagent une fenêtre glissante d’une heure, 10 créations par client et 200 au total, configurables. Au-delà : `429 rate_limited`, un en-tête `Retry-After` et un message lisible dans l’interface. Les requêtes invalides (422) et les échecs du générateur ne consomment pas le quota. Justification du choix dans le README.
+- **Logs JSON** : une ligne par requête (méthode, chemin sans query string, statut, durée, `request_id`). L’identifiant est repris de `X-Request-ID` s’il est sûr, sinon généré, et il est renvoyé dans la réponse. Les en-têtes, les corps et les adresses IP ne sont jamais écrits, et une passe finale masque tout ce qui ressemble à un secret. Les logs d’uvicorn passent par le même format, et son journal d’accès est désactivé.
+- **Interface** : `VITE_API_URL` permet de viser une API sur un autre domaine. Sans cette variable, l’interface passe toujours par `/api`.
+- `/ready` vérifie aussi la colonne de la migration 0003 : une base non migrée est signalée au lieu de provoquer des 503 incompréhensibles.
+
+Fichiers : `backend/app/config.py`, `ratelimit.py` (nouveau), `observability.py` (nouveau), `main.py`, `frontend/src/lib/api.js`, `.env.example`, `backend/tests/conftest.py`, `backend/tests/test_deploy.py` (nouveau).
+
+### B. Suppression et conservation
+
+**Pourquoi :** un voyage doit pouvoir être effacé par celui qui l’a créé, et la base ne doit pas garder indéfiniment des voyages que plus personne n’ouvre.
+
+- **`DELETE /trips/{id}`** : réservé à la clé d’édition. Avec la clé de lecture : 403. Avec un voyage inconnu ou un mauvais secret : le même 404, comme le reste de l’API. Après suppression, les deux clés reçoivent 404.
+- **Bouton « Supprimer ce voyage »** dans l’onglet Carnet, visible seulement pour l’organisateur. Le dialogue liste ce qui disparaît et rappelle qu’aucune annulation n’est possible. Le bouton reste désactivé tant que la case « Je comprends que la suppression est définitive » n’est pas cochée. Ensuite l’entrée est retirée du stockage local, et l’accueil confirme la suppression une seule fois.
+- **Conservation** : migration `0003` avec `last_opened_at`. Une lecture réussie la rafraîchit, au plus une fois par jour et sans changer la révision. Les voyages existants reçoivent la date de la migration, pour avoir droit à une période complète.
+- **Purge** : `python -m app.retention` compte les voyages non ouverts depuis `RETENTION_MONTHS` mois (12 par défaut), et `--apply` les supprime. Elle n’est branchée sur aucune tâche planifiée, et un voyage sans date n’est jamais supprimé.
+- **Page de confidentialité** (`#confidentialite`, lien dans le pied de page et dans le Carnet) : données gardées sur le serveur et dans le navigateur, adresse IP, Google Fonts, pourquoi, combien de temps, comment effacer. Chaque phrase correspond à ce que fait le code.
+- Le Carnet affiche la règle de conservation. Le message « introuvable » mentionne aussi qu’un voyage a pu être supprimé.
+
+Fichiers : `backend/app/main.py`, `models.py`, `retention.py` (nouveau), `backend/migrations/versions/0003_last_opened.py` (nouveau), `backend/tests/test_retention.py` (nouveau), `test_migration.py`, `frontend/src/components/Carnet.jsx`, `Privacy.jsx` (nouveau), `App.jsx`, `Home.jsx`, `Chrome.jsx`, `TripView.jsx`, `frontend/src/lib/route.js`, `frontend/src/styles/base.css`, `screens.css`.
+
+### Autre changement
+
+- Plus aucun tiret cadratin dans le dépôt (nouvelle règle d’écriture). Un montant absent s’affiche désormais « inconnu » au lieu d’un tiret.
+
+### Pour essayer
+
+1. Migrer la base locale (`MISE_A_JOUR_WINDOWS.md`, étape 2), puis lancer l’API et l’interface comme d’habitude.
+2. **Suppression** : « Explorer un exemple », onglet Carnet, « Supprimer ce voyage ». Annuler, puis recommencer en cochant la case. L’accueil confirme la suppression et le voyage a disparu de « Vos voyages récents ».
+3. **Confidentialité** : lien « Confidentialité » dans le pied de page.
+4. **Quota** : cliquer onze fois sur « Explorer un exemple » en moins d’une heure. La onzième fois affiche « Trop de voyages créés depuis cette connexion ». Relancer l’API remet le compteur à zéro.
+5. **CORS** : lancer l’API avec `$env:CORS_ORIGINS = "https://exemple.org"`, puis `curl.exe -i -X OPTIONS http://127.0.0.1:8000/trips -H "Origin: https://pirate.example" -H "Access-Control-Request-Method: POST"` répond 400 sans `access-control-allow-origin`.
+6. **Logs** : chaque requête affiche une ligne JSON dans le terminal de l’API. Envoyer `-H "X-Request-ID: mon-essai-01"` avec curl et retrouver cet identifiant dans la ligne.
+7. **Purge** : depuis `backend`, `..\..\.venv\Scripts\python.exe -m app.retention` (comptage seul, rien n’est supprimé).
+
+### Tests réellement exécutés
+
+- `pytest` : **67 réussis** (38 avant cette tranche), sur SQLite. Les nouveaux tests couvrent :
+  - CORS : origine refusée (preflight 400, pas d’en-tête d’autorisation), origine listée acceptée exactement, aucune origine par défaut, étoile et origines mal formées refusées, lecture depuis l’environnement ;
+  - quota : par client, partagé entre les deux routes, retour après la fenêtre, limite globale, requêtes invalides et échecs du générateur non comptés, adresses oubliées après la fenêtre ;
+  - logs : JSON valide, `request_id` unique ou repris, aucune clé, aucune empreinte, ni `Bearer` ni `Authorization` sur un parcours création, lecture, modification et suppression ; identifiant entrant douteux remplacé ; masquage ;
+  - suppression : 401, 403 lecteur, 404 inconnu et mauvais secret, 204 organisateur, 404 ensuite pour les deux clés, les autres voyages intacts ;
+  - conservation : date posée à la création, rafraîchie par une lecture sans changer la révision, pas rafraîchie par un mauvais secret ; calcul des mois (fin de mois, années bissextiles) ; purge qui ne supprime que les voyages trop anciens et garde ceux sans date ; durée nulle refusée ;
+  - migration 0002 vers 0003 : un voyage de 2023 reçoit la date de la migration, n’est pas purgé, et survit à un aller-retour downgrade/upgrade.
+- **Contrôle par mutation** : en remplaçant temporairement la liste d’origines par `*`, 3 tests CORS échouent. Le code a ensuite été remis en place.
+- **Vrai serveur uvicorn** (base temporaire) : création, lecture, mauvaise clé, suppression par le lecteur (403), preflight refusé (400) et accepté, troisième création refusée (429, `Retry-After: 3589`), suppression par l’organisateur (204), relecture (404). Dans le journal produit, recherche faite avec un script Node : aucune des deux clés, aucune empreinte, ni `Bearer` ni `authorization`. 11 lignes de requête sur 11 portent un `request_id`, aucune ne contient d’adresse IP, et les 17 lignes sont du JSON valide.
+- **Copie de la base locale** (39 voyages, la base d’origine n’a pas été touchée) : la nouvelle API répond 503 sur `/ready` tant que la copie est en 0002. Après `upgrade head`, la copie est en 0003, les 39 voyages et leurs données sont identiques, tous ont une date de dernière ouverture, et `/ready` répond 200.
+- **Commande de purge** sur une base temporaire : comptage de 3 voyages vieillis, `--apply` en supprime 3, un second passage n’en trouve plus.
+- `npm run build` : réussi.
+- **Navigateur** (Chrome headless piloté par un script local hors dépôt, interface sur `127.0.0.1:5174` et API sur `127.0.0.1:8011`, donc deux origines différentes) :
+  - parcours complet existant : **30/30**, donc toute l’application fonctionne en mode CORS ;
+  - parcours de la tranche 3 : **14/14** : exemple créé à travers le CORS, zone de suppression et conservation visibles pour l’organisateur, aucune pour le lecteur, suppression par le lecteur refusée par l’API (403), dialogue (bouton désactivé tant que la case n’est pas cochée, Annuler ne supprime rien), suppression confirmée (retour à l’accueil, message, retrait de la liste locale), lien de lecture ensuite « introuvable », message non répété à la visite suivante, page de confidentialité depuis le pied de page avec ses six sections, pas de débordement à 390 et 768 px, message 429 dans l’interface avec une API limitée à une création, appel depuis une origine non autorisée bloqué par le navigateur, aucune erreur JavaScript.
+  - Ces tests ont été lancés avec les requêtes externes bloquées (internet était instable cette nuit) : les polices Google n’étaient pas chargées, les polices de secours ont été utilisées.
+
+### Non vérifié
+
+- **PostgreSQL** : ni Docker ni `psql` sur ce poste. Les tests tourneront sur PostgreSQL 17 dans la CI GitHub au push, mais je n’ai pas pu voir leur résultat (pas de CLI `gh`, et l’accès à l’API GitHub m’a été refusé).
+- Le comportement derrière un vrai reverse proxy (`--proxy-headers`) n’a pas été testé.
+- Pas de test dans Safari, Firefox, sur un vrai téléphone ou avec un lecteur d’écran.
+
+### Limites
+
+- Le quota vit dans la mémoire d’un seul processus : il repart de zéro au redémarrage et n’est pas partagé entre plusieurs instances.
+- La purge est manuelle.
+- La page de confidentialité n’indique ni responsable ni contact : à compléter avant une mise en ligne.
+- Google Fonts reçoit l’adresse IP des visiteurs (c’est écrit sur la page de confidentialité). Héberger les polices supprimerait ce transfert.
+- Les logs vont sur la sortie d’erreur : leur durée de conservation dépendra de l’hébergeur.
+
 ## 30 octobre 2026 : Logo oiseau et ambiance animée
 
 ### Changements
