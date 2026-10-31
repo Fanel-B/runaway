@@ -2,7 +2,7 @@
 
 Chaque entrée indique ce qui a changé, pourquoi, les fichiers concernés, comment l’essayer, ce qui a **réellement** été vérifié, et les limites qui restent.
 
-## 30 octobre 2026 — Logo oiseau et ambiance animée
+## 30 octobre 2026 : Logo oiseau et ambiance animée
 
 ### Changements
 
@@ -28,7 +28,7 @@ Fichiers : `frontend/src/components/Ambience.jsx` (nouveau), `Chrome.jsx`, `Trip
 - Le parcours navigateur déclenche les clics en JavaScript, pas avec une vraie souris. Les clics à travers le voile reposent sur `pointer-events: none`.
 - Pas encore testé sur un téléphone réel ni dans Safari, qui peut gérer différemment les animations des éléments fixes.
 
-## 30 octobre 2026 — Vérification complète et corrections
+## 30 octobre 2026 : Vérification complète et corrections
 
 ### Changements
 
@@ -63,7 +63,7 @@ Fichiers : `frontend/src/components/EditStopDialog.jsx`, `ErrorBoundary.jsx`, `A
 - Les polices Fraunces, Instrument Sans et Caveat dépendent de Google Fonts : hors ligne, ce sont les polices de secours qui s’affichent.
 - Pas de test sur Safari ou Firefox, ni avec un vrai lecteur d’écran.
 
-## 29 octobre 2026 — Deuxième tranche : carnet éditable et nouvelle identité
+## 29 octobre 2026 : Deuxième tranche : carnet éditable et nouvelle identité
 
 ### Diagnostic de départ
 

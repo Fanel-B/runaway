@@ -41,7 +41,7 @@ Pour revenir en arrière si nécessaire : `..\..\.venv\Scripts\python.exe -m ale
 
 ## 3. Lancer le projet (deux terminaux)
 
-**Terminal 1 — API**
+**Terminal 1 : API**
 
 ```powershell
 cd C:\Users\bfane\Projets\Runaway_Premiere_Tranche\runaway\backend
@@ -50,7 +50,7 @@ $env:LLM_PROVIDER = "fake"
 ..\..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-**Terminal 2 — interface**
+**Terminal 2 : interface**
 
 ```powershell
 cd C:\Users\bfane\Projets\Runaway_Premiere_Tranche\runaway\frontend

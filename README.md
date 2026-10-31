@@ -64,8 +64,8 @@ Le proxy `/api` n’existe qu’en développement (Vite). Héberger `dist/` dema
 
 | Méthode | Route | Droit | Rôle |
 | --- | --- | --- | --- |
-| `POST` | `/trips` | — | Crée un voyage ; renvoie `read_token` **et** `edit_token` |
-| `POST` | `/trips/example` | — | Crée une copie indépendante de l’exemple fictif |
+| `POST` | `/trips` | aucune | Crée un voyage ; renvoie `read_token` **et** `edit_token` |
+| `POST` | `/trips/example` | aucune | Crée une copie indépendante de l’exemple fictif |
 | `GET` | `/trips/{id}` | lecture ou édition | Renvoie le voyage, `role`, `revision`, budget recalculé |
 | `PATCH` | `/trips/{id}/days/{n}/stops/{i}` | édition | Modifie une activité (refusé si verrouillée) ou la marque revue |
 | `PUT` | `/trips/{id}/days/{n}/stops/{i}/lock` | édition | Verrouille ou déverrouille |

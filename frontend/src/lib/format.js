@@ -21,7 +21,7 @@ const euroFormats = {
 };
 
 export function euros(cents) {
-  if (cents == null) return '—';
+  if (cents == null) return 'inconnu';
   return euroFormats[cents % 100 === 0 ? 0 : 2].format(cents / 100);
 }
 
