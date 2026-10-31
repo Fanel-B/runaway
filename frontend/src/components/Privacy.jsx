@@ -3,16 +3,21 @@ export function Privacy() {
   return (
     <article className="prose-page" aria-labelledby="privacy-title">
       <p className="eyebrow">Confidentialité</p>
-      <h1 id="privacy-title" className="display-sm">Ce que Runaway garde, et comment l’effacer.</h1>
+      <h1 id="privacy-title" className="display-sm">
+        Ce que Runaway garde, et comment l’effacer.
+      </h1>
       <p className="lead">
-        Runaway est un prototype étudiant. Il n’a ni compte, ni mot de passe, ni publicité, ni mesure d’audience.
-        Il n’est pas encore en ligne : en local, tout reste sur votre machine.
+        Runaway est un prototype étudiant. Il n’a ni compte, ni mot de passe, ni publicité, ni mesure d’audience. Il
+        n’est pas encore en ligne : en local, tout reste sur votre machine.
       </p>
 
       <h2>Sur le serveur, pour chaque voyage</h2>
       <ul>
-        <li>Ce que vous saisissez : ville de départ, destination, dates, nombre de voyageurs, plafond par personne, ambiance.</li>
-        <li>Le programme et vos modifications, les montants du budget, les décisions « On garde ».</li>
+        <li>
+          Ce que vous saisissez : ville de départ, destination, dates, nombre de voyageurs, plafond par personne,
+          ambiance.
+        </li>
+        <li>Le programme et vos modifications, les montants du budget, les décisions «&nbsp;On garde&nbsp;».</li>
         <li>Les dates de création, de dernière modification et de dernière ouverture, et le numéro de révision.</li>
         <li>
           Une empreinte de la clé de lecture et de la clé organisateur, jamais les clés elles-mêmes : le serveur peut
@@ -27,7 +32,10 @@ export function Privacy() {
       <h2>Dans votre navigateur</h2>
       <ul>
         <li>La liste des voyages ouverts sur cet appareil, avec leur clé de lecture.</li>
-        <li>La clé organisateur des voyages que vous avez créés. Elle n’est envoyée qu’au serveur de Runaway, pour prouver vos droits.</li>
+        <li>
+          La clé organisateur des voyages que vous avez créés. Elle n’est envoyée qu’au serveur de Runaway, pour prouver
+          vos droits.
+        </li>
         <li>Votre choix de mettre l’ambiance animée en pause.</li>
       </ul>
 
@@ -60,8 +68,8 @@ export function Privacy() {
       <h2>Comment effacer</h2>
       <ul>
         <li>
-          <strong>Vous organisez le voyage :</strong> onglet Carnet, « Supprimer ce voyage ». La suppression est
-          définitive et vaut pour tout le monde : le lien de lecture ne fonctionnera plus.
+          <strong>Vous organisez le voyage :</strong> onglet Carnet, «&nbsp;Supprimer ce voyage&nbsp;». La suppression
+          est définitive et vaut pour tout le monde : le lien de lecture ne fonctionnera plus.
         </li>
         <li>
           <strong>Vous avez reçu un lien de lecture :</strong> seul l’organisateur peut supprimer le voyage. Vous pouvez
@@ -74,7 +82,11 @@ export function Privacy() {
       </ul>
 
       <p className="fine">Dernière mise à jour : 31 octobre 2026.</p>
-      <p><a className="btn btn-ghost" href="#">Retour à l’accueil</a></p>
+      <p>
+        <a className="btn btn-ghost" href="#">
+          Retour à l’accueil
+        </a>
+      </p>
     </article>
   );
 }
