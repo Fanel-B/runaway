@@ -1,0 +1,65 @@
+/* Runaway design tokens. Palette and rules documented in docs/DIRECTION_ARTISTIQUE.md. */
+:root {
+  /* Brand palette */
+  --cream: #FFF6E8;
+  --cream-deep: #F6E9D3;
+  --paper: #FFFBF4;
+  --ink: #18392F;
+  --ink-soft: #3E5A50;
+  --cobalt: #3155E7;
+  --cobalt-deep: #2240B8;
+  --cobalt-soft: #AEBBF6;
+  --coral: #EF725B;
+  --coral-ink: #B2432F;
+  --sun: #F4CB54;
+  --sun-soft: #F8E2A6; /* large yellow surfaces: the full yellow stays for small accents */
+  --rose: #EFCBDD;
+  --sage: #C6D7BE;
+  --sky: #DCE3FB;
+  --peach: #F9D6CA;
+
+  /* Decorative day surfaces: never used to signal success or failure. */
+  --day-sun: var(--sun-soft);
+  --day-rose: #EFCBDD;
+  --day-sage: #C6D7BE;
+  --day-sky: #DCE3FB;
+  --day-peach: #F9D6CA;
+
+  /* Status colours: always paired with an icon and a text label. */
+  --ok-ink: #17543A;
+  --ok-bg: #E1F0E5;
+  --danger-ink: #9A1B12;
+  --danger-bg: #FCE3E0;
+  --unknown-ink: #4A3F8F;
+  --unknown-bg: #ECE9FB;
+  --warn-ink: #6B4500;
+  --warn-bg: #FFF3D1;
+
+  --muted: #4F6159;
+  --line: rgba(24, 57, 47, 0.16);
+  --line-strong: rgba(24, 57, 47, 0.38);
+  --focus: var(--cobalt);
+
+  /* Type */
+  --font-display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-ui: 'Instrument Sans', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-hand: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
+
+  /* Spacing scale (4px base) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --page: 1240px;
+
+  --radius-s: 6px;
+  --radius-m: 14px;
+  --radius-l: 28px;
+  --shadow-paper: 0 1px 0 rgba(24, 57, 47, 0.08), 0 18px 40px -24px rgba(24, 57, 47, 0.45);
+}
