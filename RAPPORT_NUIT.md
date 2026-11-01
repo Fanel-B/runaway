@@ -49,6 +49,8 @@ Le détail est dans `JOURNAL_DES_MODIFICATIONS.md`.
 
 ## 3. Ce que je n’ai pas réussi à faire
 
+> **Mise à jour du 1er novembre** : une fois `gh` disponible, les trois pull requests ont été ouvertes (#1, #2, #3). La CI est verte sur les trois branches : 67 tests réussis sur SQLite et sur PostgreSQL 17, lint, build. L’audit signale les 6 vulnérabilités « moderate » attendues, en simple avertissement. Les trois premiers points ci-dessous sont donc réglés.
+
 - **Ouvrir les pull requests.** Le CLI `gh` n’est pas installé. J’ai tenté d’utiliser l’identifiant GitHub déjà enregistré par Git pour appeler l’API, et le système de permissions l’a refusé. Je ne l’ai pas contourné. Il te reste à ouvrir les trois liens de `docs/pull-requests/` et à coller les descriptions (deux minutes en tout).
 - **Tester sur PostgreSQL** : ni Docker ni `psql` sur ce poste. La CI le fera au push, mais je n’ai pas pu voir son résultat.
 - **Voir la CI GitHub** : même cause, pas d’accès à l’API GitHub.
