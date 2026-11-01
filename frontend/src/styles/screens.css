@@ -1,5 +1,5 @@
 /* Full-bleed sections keep their content on the page grid with this padding. */
-.site-header, .hero-text, .postcards, .recent, .brief-form, .state-page, .cover, .tabs-inner, .tab-panels, .footer-inner, .band {
+.site-header, .hero-text, .postcards, .recent, .brief-form, .state-page, .prose-page, .cover, .tabs-inner, .tab-panels, .footer-inner, .band {
   padding-inline: max(var(--gutter), (100% - var(--page)) / 2);
 }
 
@@ -59,6 +59,7 @@
 .footer-logo { display: flex; align-items: center; }
 .footer-logo .bird-mark { color: var(--sun); }
 .footer-text { color: rgba(255, 246, 232, 0.86); max-width: 52ch; font-size: 0.95rem; }
+.footer-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); }
 
 /* ---------- Home ---------- */
 .hero { position: relative; padding-top: clamp(40px, 7vw, 96px); }
@@ -131,6 +132,16 @@
 .mood:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
 .mood:has(input:checked) .mood-label::after { content: ' ✓'; }
 .mood:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* ---------- Privacy ---------- */
+.prose-page { display: block; padding-block: var(--s-7) var(--s-6); }
+.prose-page .display-sm { margin-bottom: var(--s-4); }
+.prose-page h2 { font-family: var(--font-display); font-size: clamp(1.35rem, 2.2vw, 1.7rem); font-weight: 560; margin: var(--s-6) 0 var(--s-3); }
+.prose-page p, .prose-page li { max-width: 68ch; }
+.prose-page p + p { margin-top: var(--s-3); }
+.prose-page ul { list-style: disc; padding-left: 1.3em; display: grid; gap: var(--s-2); margin-bottom: var(--s-3); }
+.prose-page .fine { margin-top: var(--s-6); }
+.prose-page .btn { margin-top: var(--s-4); }
 
 /* ---------- Trip ambience: a translucent veil over most of the page ---------- */
 /* Multiply keeps it ink-on-paper: text underneath only gets darker, never washed out. */
@@ -353,6 +364,9 @@
 .key-box input { font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; }
 .key-box .btn { justify-self: start; }
 .carnet-info { grid-column: span 12; background: var(--rose); --muted: var(--ink-soft); }
+.carnet-danger { grid-column: span 12; background: var(--paper); border: 2px dashed var(--danger-ink); }
+.carnet-danger .muted { max-width: 62ch; margin-bottom: var(--s-4); }
+.danger-list { list-style: disc; padding-left: 1.3em; display: grid; gap: var(--s-2); margin-bottom: var(--s-3); }
 .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-4); margin: var(--s-4) 0; }
 .facts dt { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 .facts dd { font-weight: 600; }

@@ -28,13 +28,16 @@ function parseValidation(detail) {
   return fields;
 }
 
+// Same origin through the Vite proxy by default; VITE_API_URL points to a separate API once deployed.
+const BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+
 export async function api(path, { method = 'GET', token, body } = {}) {
   const headers = {};
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   if (token) headers.Authorization = `Bearer ${token}`;
   let response;
   try {
-    response = await fetch(`/api${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+    response = await fetch(`${BASE}${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
   } catch {
     throw new ApiError('Serveur injoignable. Vérifiez que l’API est lancée, puis réessayez.');
   }
