@@ -2,14 +2,14 @@
 
 ## Où en est le dépôt (31 octobre 2026)
 
-| Branche            | Contenu                                                                | État                                         |
-| ------------------ | ---------------------------------------------------------------------- | -------------------------------------------- |
-| `main`             | Commit initial, réécrit sans `Co-Authored-By` (`69c8eea`)              | Inchangée cette nuit                         |
-| `essai`            | Tranche 2 : carnet éditable, droits, budget, identité visuelle         | Poussée, PR vers `main` à ouvrir             |
-| `t3-fiabilisation` | Tranche 3 : API déployable, suppression, conservation, confidentialité | Poussée, PR vers `essai` à ouvrir            |
-| `t4-outillage`     | ESLint, Prettier, lint bloquant et audit en avertissement dans la CI   | Poussée, PR vers `t3-fiabilisation` à ouvrir |
+| Branche            | Contenu                                                                | État                                           |
+| ------------------ | ---------------------------------------------------------------------- | ---------------------------------------------- |
+| `main`             | Commit initial, réécrit sans `Co-Authored-By` (`69c8eea`)              | Inchangée cette nuit                           |
+| `essai`            | Tranche 2 : carnet éditable, droits, budget, identité visuelle         | Poussée, PR #1 vers `main` ouverte             |
+| `t3-fiabilisation` | Tranche 3 : API déployable, suppression, conservation, confidentialité | Poussée, PR #2 vers `essai` ouverte            |
+| `t4-outillage`     | ESLint, Prettier, lint bloquant et audit en avertissement dans la CI   | Poussée, PR #3 vers `t3-fiabilisation` ouverte |
 
-Les pull requests n’ont pas pu être ouvertes automatiquement (voir `RAPPORT_NUIT.md`). Leurs descriptions sont prêtes dans `docs/pull-requests/`.
+Les trois pull requests ont été ouvertes le 1er novembre avec `gh` (#1, #2, #3), à relire et fusionner dans cet ordre. La CI est verte sur les trois branches : 67 tests sur SQLite et sur PostgreSQL 17, lint, build, et audit en simple avertissement.
 
 ## Terminé
 
@@ -30,8 +30,8 @@ Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 ## Avant de reprendre
 
 1. **Migrer la base locale en 0003** (`MISE_A_JOUR_WINDOWS.md`, étape 2). Sans cela, la nouvelle API répond 503. Je ne l’ai pas fait : la migration a seulement été testée sur une copie (39 voyages conservés à l’identique).
-2. Ouvrir les pull requests avec les liens et descriptions de `docs/pull-requests/`.
-3. Regarder la CI GitHub de chaque branche : c’est le seul passage des tests sur PostgreSQL.
+2. Relire les pull requests #1, #2 et #3.
+3. La CI a validé PostgreSQL (67 tests) ; la revérifier après chaque fusion.
 
 ## Restant
 
@@ -48,7 +48,7 @@ Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 
 - Aucun blocage technique.
 - Décisions qui te reviennent : l’ordre de fusion des PR, l’hébergement, la durée de conservation définitive, le contact à publier.
-- Outils absents sur ce poste : Docker, `psql`, CLI `gh`.
+- Outils absents sur ce poste : Docker et `psql` (PostgreSQL n’est testé que par la CI). `gh` est installé et connecté.
 
 ## Prochaine action
 
