@@ -72,12 +72,12 @@ npm run build
 
 ## 5. Problèmes fréquents
 
-| Symptôme | Cause probable | Solution |
-| --- | --- | --- |
-| « Serveur injoignable » dans l’interface | L’API ne tourne pas sur le port 8000 | Relancer le terminal 1 |
-| `/ready` renvoie 503, ou « Lecture indisponible » | Migration 0003 non appliquée | Étape 2 |
-| « Voyage introuvable » | Lien incomplet ou clé erronée | Rouvrir depuis « Vos voyages récents » |
-| Plus de bouton « Modifier » | Clé organisateur absente de ce navigateur (navigation privée, données effacées) | Carnet → « Clé organisateur » → coller la clé sauvegardée |
-| « Trop de voyages créés depuis cette connexion » | Quota de 10 créations par heure atteint | Attendre, ou relancer l’API (le quota vit en mémoire), ou augmenter `RATE_LIMIT_CREATIONS_PER_IP` |
-| Polices différentes | Pas d’accès à Google Fonts | Normal : les polices de secours prennent le relais |
-| `Activate.ps1` bloqué | Politique d’exécution | Inutile : appeler directement `..\..\.venv\Scripts\python.exe` |
+| Symptôme                                          | Cause probable                                                                  | Solution                                                                                          |
+| ------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| « Serveur injoignable » dans l’interface          | L’API ne tourne pas sur le port 8000                                            | Relancer le terminal 1                                                                            |
+| `/ready` renvoie 503, ou « Lecture indisponible » | Migration 0003 non appliquée                                                    | Étape 2                                                                                           |
+| « Voyage introuvable »                            | Lien incomplet ou clé erronée                                                   | Rouvrir depuis « Vos voyages récents »                                                            |
+| Plus de bouton « Modifier »                       | Clé organisateur absente de ce navigateur (navigation privée, données effacées) | Carnet → « Clé organisateur » → coller la clé sauvegardée                                         |
+| « Trop de voyages créés depuis cette connexion »  | Quota de 10 créations par heure atteint                                         | Attendre, ou relancer l’API (le quota vit en mémoire), ou augmenter `RATE_LIMIT_CREATIONS_PER_IP` |
+| Polices différentes                               | Pas d’accès à Google Fonts                                                      | Normal : les polices de secours prennent le relais                                                |
+| `Activate.ps1` bloqué                             | Politique d’exécution                                                           | Inutile : appeler directement `..\..\.venv\Scripts\python.exe`                                    |

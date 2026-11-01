@@ -15,16 +15,16 @@ Runaway se présente comme un carnet d’escapades en trois chapitres.
 
 Le générateur reste `FakeLLM` : **ce n’est pas un itinéraire recommandé**. Aucun lieu, horaire ni tarif n’est vérifié, et aucun appel à une IA payante ni à OpenStreetMap n’est effectué. Un **exemple fictif** de trois jours sur la côte basque montre une démonstration remplie. Chaque clic en crée une copie indépendante.
 
-| Disponible | À construire |
-| --- | --- |
-| API FastAPI, validation Pydantic, migrations Alembic 0001 à 0003 | Appel réel à OpenRouter derrière `LLMClient` |
-| Secret de lecture et secret d’édition distincts, empreintes seules en base | Révocation et rotation des liens |
-| Verrous et révisions contrôlés par le serveur (comparer-puis-écrire atomique) | Historique consultable des versions |
-| Budget éditable et persistant, recalculé par le serveur | Catalogue d’estimations sourcées et datées |
-| Interface React découpée en composants, design system documenté | Recherche de lieux et carte Leaflet |
-| Tests pytest (droits, verrous, révisions, budgets, migrations, CORS, quota, logs, purge) | Tests navigateur automatisés dans la CI |
-| CORS par liste d’origines, quota de créations, logs JSON sans secret | Quota partagé entre plusieurs instances (Redis ou base) |
-| Suppression d’un voyage, purge de conservation (manuelle) | Purge planifiée, contact du responsable sur la page de confidentialité |
+| Disponible                                                                               | À construire                                                           |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| API FastAPI, validation Pydantic, migrations Alembic 0001 à 0003                         | Appel réel à OpenRouter derrière `LLMClient`                           |
+| Secret de lecture et secret d’édition distincts, empreintes seules en base               | Révocation et rotation des liens                                       |
+| Verrous et révisions contrôlés par le serveur (comparer-puis-écrire atomique)            | Historique consultable des versions                                    |
+| Budget éditable et persistant, recalculé par le serveur                                  | Catalogue d’estimations sourcées et datées                             |
+| Interface React découpée en composants, design system documenté                          | Recherche de lieux et carte Leaflet                                    |
+| Tests pytest (droits, verrous, révisions, budgets, migrations, CORS, quota, logs, purge) | Tests navigateur automatisés dans la CI                                |
+| CORS par liste d’origines, quota de créations, logs JSON sans secret                     | Quota partagé entre plusieurs instances (Redis ou base)                |
+| Suppression d’un voyage, purge de conservation (manuelle)                                | Purge planifiée, contact du responsable sur la page de confidentialité |
 
 ## Lancer le projet
 
@@ -67,17 +67,17 @@ Le proxy `/api` n’existe qu’en développement (Vite). En production, deux po
 
 Toutes les variables sont documentées dans [.env.example](.env.example). Le backend lit l’environnement du terminal, pas le fichier `.env` (seul Docker Compose le lit).
 
-| Variable | Défaut | Rôle |
-| --- | --- | --- |
-| `DATABASE_URL` | `sqlite:///./runaway.db` | Base de données |
-| `LLM_PROVIDER` | `fake` | Seule valeur acceptée pour l’instant |
-| `CORS_ORIGINS` | vide | Origines autorisées à appeler l’API depuis un navigateur, séparées par des virgules, exactes. `*` est refusé au démarrage |
-| `RATE_LIMIT_CREATIONS_PER_IP` | `10` | Créations de voyages par client et par fenêtre |
-| `RATE_LIMIT_CREATIONS_GLOBAL` | `200` | Créations de voyages, tous clients confondus, par fenêtre |
-| `RATE_LIMIT_WINDOW_SECONDS` | `3600` | Durée de la fenêtre glissante |
-| `RETENTION_MONTHS` | `12` | Durée sans ouverture après laquelle un voyage est purgeable |
-| `LOG_LEVEL` | `INFO` | Niveau des logs JSON |
-| `VITE_API_URL` | `/api` | Adresse de l’API vue par l’interface, lue au build |
+| Variable                      | Défaut                   | Rôle                                                                                                                      |
+| ----------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                | `sqlite:///./runaway.db` | Base de données                                                                                                           |
+| `LLM_PROVIDER`                | `fake`                   | Seule valeur acceptée pour l’instant                                                                                      |
+| `CORS_ORIGINS`                | vide                     | Origines autorisées à appeler l’API depuis un navigateur, séparées par des virgules, exactes. `*` est refusé au démarrage |
+| `RATE_LIMIT_CREATIONS_PER_IP` | `10`                     | Créations de voyages par client et par fenêtre                                                                            |
+| `RATE_LIMIT_CREATIONS_GLOBAL` | `200`                    | Créations de voyages, tous clients confondus, par fenêtre                                                                 |
+| `RATE_LIMIT_WINDOW_SECONDS`   | `3600`                   | Durée de la fenêtre glissante                                                                                             |
+| `RETENTION_MONTHS`            | `12`                     | Durée sans ouverture après laquelle un voyage est purgeable                                                               |
+| `LOG_LEVEL`                   | `INFO`                   | Niveau des logs JSON                                                                                                      |
+| `VITE_API_URL`                | `/api`                   | Adresse de l’API vue par l’interface, lue au build                                                                        |
 
 **Pourquoi 10 créations par heure et par client, 200 au total ?** Un groupe crée un voyage, parfois deux ou trois en essayant des dates, et ouvre l’exemple quelques fois : 10 laisse une marge large. Un script, lui, est plafonné à 240 voyages par jour et par adresse au lieu de plusieurs milliers par minute. La limite globale protège la base si le script change d’adresse. En contrepartie, une vague d’abus peut bloquer les vraies créations pendant au plus une heure. Les lectures et modifications ne sont pas limitées. Les requêtes invalides (422) et les échecs du générateur ne consomment pas le quota.
 
@@ -103,15 +103,15 @@ Elle utilise `DATABASE_URL` et affiche un résumé JSON (date limite, nombre de 
 
 ## API
 
-| Méthode | Route | Droit | Rôle |
-| --- | --- | --- | --- |
-| `POST` | `/trips` | aucune | Crée un voyage ; renvoie `read_token` **et** `edit_token` |
-| `POST` | `/trips/example` | aucune | Crée une copie indépendante de l’exemple fictif |
-| `GET` | `/trips/{id}` | lecture ou édition | Renvoie le voyage, `role`, `revision`, budget recalculé |
-| `PATCH` | `/trips/{id}/days/{n}/stops/{i}` | édition | Modifie une activité (refusé si verrouillée) ou la marque revue |
-| `PUT` | `/trips/{id}/days/{n}/stops/{i}/lock` | édition | Verrouille ou déverrouille |
-| `PUT` | `/trips/{id}/budget` | édition | Enregistre les cinq postes |
-| `DELETE` | `/trips/{id}` | édition | Supprime définitivement le voyage (204) |
+| Méthode  | Route                                 | Droit              | Rôle                                                            |
+| -------- | ------------------------------------- | ------------------ | --------------------------------------------------------------- |
+| `POST`   | `/trips`                              | aucune             | Crée un voyage ; renvoie `read_token` **et** `edit_token`       |
+| `POST`   | `/trips/example`                      | aucune             | Crée une copie indépendante de l’exemple fictif                 |
+| `GET`    | `/trips/{id}`                         | lecture ou édition | Renvoie le voyage, `role`, `revision`, budget recalculé         |
+| `PATCH`  | `/trips/{id}/days/{n}/stops/{i}`      | édition            | Modifie une activité (refusé si verrouillée) ou la marque revue |
+| `PUT`    | `/trips/{id}/days/{n}/stops/{i}/lock` | édition            | Verrouille ou déverrouille                                      |
+| `PUT`    | `/trips/{id}/budget`                  | édition            | Enregistre les cinq postes                                      |
+| `DELETE` | `/trips/{id}`                         | édition            | Supprime définitivement le voyage (204)                         |
 
 Les secrets passent dans `Authorization: Bearer …`. Chaque écriture envoie `expected_revision`. Le serveur renvoie `409 revision_conflict` si le voyage a changé entre-temps, `409 locked` pour une activité gardée et `403 read_only` pour un lien de lecture. Un voyage inconnu et un mauvais secret donnent le même `404`. Au-delà du quota, les créations reçoivent `429 rate_limited` avec un en-tête `Retry-After`.
 
@@ -125,6 +125,10 @@ npm run build
 ```
 
 Les tests utilisent une base SQLite temporaire initialisée par les vraies migrations. Le test de migration part de la révision 0001 avec un ancien voyage. `TEST_DATABASE_URL` permet de viser une base PostgreSQL **réservée aux tests**. La CI GitHub Actions prévoit SQLite, PostgreSQL 17 et le build du frontend. Les vérifications réellement exécutées sont listées dans [JOURNAL_DES_MODIFICATIONS.md](JOURNAL_DES_MODIFICATIONS.md).
+
+### Qualité du code frontend
+
+Depuis `frontend` : `npm run lint` (ESLint, configuration recommandée React et hooks), `npm run format` pour formater tout le dépôt avec Prettier, `npm run format:check` pour vérifier sans modifier. La CI bloque sur le lint et signale `npm audit` en simple avertissement.
 
 ## Organisation
 

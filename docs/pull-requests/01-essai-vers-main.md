@@ -10,6 +10,7 @@ Description à coller :
 ## Ce que contient la tranche 2
 
 **Droits et écriture**
+
 - Deux secrets distincts par voyage : une clé de lecture (dans le lien partagé) et une clé d'édition (gardée dans le navigateur de l'organisateur). La base ne stocke que leurs empreintes SHA-256.
 - Rôle décidé par le serveur : `organizer` ou `reader`. Un voyage inconnu et un mauvais secret donnent le même 404.
 - Écriture atomique par révision : chaque modification envoie `expected_revision`, et un écran périmé reçoit `409 revision_conflict` au lieu d'écraser une version plus récente.
@@ -17,11 +18,13 @@ Description à coller :
 - Migration Alembic 0002, purement additive : les anciens voyages gardent leur lien de lecture et restent en lecture seule. Un ancien lien ne devient jamais un droit d'édition.
 
 **Budget**
+
 - Cinq postes et trois scénarios, saisis par personne ou pour le groupe, enregistrés côté serveur.
 - Tous les totaux sont calculés par `backend/app/budget.py`, jamais dans le frontend.
 - Un champ vide reste inconnu, un zéro est un coût nul assumé. « Dans le plafond » n'apparaît jamais tant qu'un poste manque.
 
 **Interface**
+
 - Interface découpée en composants, direction artistique « carnet d'escapades » documentée (`docs/DIRECTION_ARTISTIQUE.md`).
 - Écrans : accueil avec cartes d'inspiration, formulaire, couverture, Programme / Budget / Carnet, comparaison avant/après, export JSON sans secret, impression, journal du projet.
 - Exemple fictif de trois jours, copie indépendante à chaque ouverture.

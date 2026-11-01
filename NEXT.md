@@ -2,12 +2,12 @@
 
 ## Où en est le dépôt (31 octobre 2026)
 
-| Branche | Contenu | État |
-| --- | --- | --- |
-| `main` | Commit initial, réécrit sans `Co-Authored-By` (`69c8eea`) | Inchangée cette nuit |
-| `essai` | Tranche 2 : carnet éditable, droits, budget, identité visuelle | Poussée, PR #1 vers `main` ouverte |
-| `t3-fiabilisation` | Tranche 3 : API déployable, suppression, conservation, confidentialité | Poussée, PR #2 vers `essai` ouverte |
-| `t4-outillage` | ESLint, Prettier, lint et audit dans la CI  | Poussée, PR #3 vers `t3-fiabilisation` ouverte |
+| Branche            | Contenu                                                                | État                                           |
+| ------------------ | ---------------------------------------------------------------------- | ---------------------------------------------- |
+| `main`             | Commit initial, réécrit sans `Co-Authored-By` (`69c8eea`)              | Inchangée cette nuit                           |
+| `essai`            | Tranche 2 : carnet éditable, droits, budget, identité visuelle         | Poussée, PR #1 vers `main` ouverte             |
+| `t3-fiabilisation` | Tranche 3 : API déployable, suppression, conservation, confidentialité | Poussée, PR #2 vers `essai` ouverte            |
+| `t4-outillage`     | ESLint, Prettier, lint bloquant et audit en avertissement dans la CI   | Poussée, PR #3 vers `t3-fiabilisation` ouverte |
 
 Les trois pull requests ont été ouvertes le 1er novembre avec `gh` (#1, #2, #3), à relire et fusionner dans cet ordre. La CI est verte sur les trois branches : 67 tests sur SQLite et sur PostgreSQL 17, lint, build, et audit en simple avertissement.
 
@@ -23,6 +23,7 @@ Les trois pull requests ont été ouvertes le 1er novembre avec `gh` (#1, #2, #3
   - page de confidentialité ;
   - `VITE_API_URL` pour une API sur un autre domaine ;
   - aucun tiret cadratin dans le dépôt.
+- **Tranche 4** (branche `t4-outillage`) : ESLint avec la configuration recommandée React, Prettier pour tout le dépôt, `npm run lint` bloquant et `npm audit` en avertissement dans la CI.
 
 Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 

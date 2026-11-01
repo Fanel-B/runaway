@@ -5,4 +5,8 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/screens.css';
 
-createRoot(document.getElementById('root')).render(<React.StrictMode><App /></React.StrictMode>);
+createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

@@ -6,29 +6,29 @@
 
 J’ai consulté les trois références avec un navigateur sans interface (captures Chrome headless) : Safeer et Q’in Saba à travers leurs pages CSS Design Awards, et Terreno directement sur son site, en partie masqué par sa bannière de cookies. Je m’inspire de leurs principes, sans reprendre leur marque, leurs textes ni leurs images.
 
-| Référence | Principe retenu | Application dans Runaway |
-| --- | --- | --- |
-| [Safeer](https://www.cssdesignawards.com/sites/safeer/50189/) | Immersion, grand paysage plein cadre, cartes photo inclinées qui chevauchent la section suivante | Accueil : paysage SVG en pleine largeur, cartes postales inclinées posées sur le bas du paysage |
-| [Q’in Saba](https://www.cssdesignawards.com/sites/qin-saba-italy-travel/50541/) | Carnet éditorial, serif délicate, petites étiquettes espacées, légendes discrètes | Titres en Fraunces, étiquettes en capitales espacées, légende manuscrite sous les illustrations, couverture de carnet avec image « collée » |
-| [Terreno Barrio Hotel](https://www.terrenohotel.com/en/) | Personnalité chaleureuse, grands aplats de couleur, objets de collage, journée racontée | Chapitres en aplats (soleil, rose, sauge), tampon « Exemple fictif », journées découpées du matin au soir |
+| Référence                                                                       | Principe retenu                                                                                  | Application dans Runaway                                                                                                                    |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Safeer](https://www.cssdesignawards.com/sites/safeer/50189/)                   | Immersion, grand paysage plein cadre, cartes photo inclinées qui chevauchent la section suivante | Accueil : paysage SVG en pleine largeur, cartes postales inclinées posées sur le bas du paysage                                             |
+| [Q’in Saba](https://www.cssdesignawards.com/sites/qin-saba-italy-travel/50541/) | Carnet éditorial, serif délicate, petites étiquettes espacées, légendes discrètes                | Titres en Fraunces, étiquettes en capitales espacées, légende manuscrite sous les illustrations, couverture de carnet avec image « collée » |
+| [Terreno Barrio Hotel](https://www.terrenohotel.com/en/)                        | Personnalité chaleureuse, grands aplats de couleur, objets de collage, journée racontée          | Chapitres en aplats (soleil, rose, sauge), tampon « Exemple fictif », journées découpées du matin au soir                                   |
 
 ## Palette
 
 Les couleurs sont centralisées dans `frontend/src/styles/tokens.css`.
 
-| Rôle | Jeton | Valeur | Usage |
-| --- | --- | --- | --- |
-| Fond principal | `--cream` | `#FFF6E8` | Page, fonds clairs |
-| Papier | `--paper` | `#FFFBF4` | Cartes postales, champs, tableau |
-| Encre | `--ink` | `#18392F` | Texte, pied de page, éléments verrouillés |
-| Cobalt | `--cobalt` | `#3155E7` | Action principale (texte blanc, contraste ≈ 5,9:1), focus, partage |
-| Corail | `--coral` | `#EF725B` | **Décor uniquement** (soleil, repères de parcours), jamais du texte |
-| Corail encre | `--coral-ink` | `#B2432F` | Texte corail : titres en italique, annotations (≈ 5,3:1 sur crème) |
-| Jaune soleil | `--sun` | `#F4CB54` | Petits accents seulement : pastilles, soleils des illustrations, logo du pied de page |
-| Jaune doux | `--sun-soft` | `#F8E2A6` | Grandes surfaces jaunes : chapitre 1, plafond du budget, ciel « grands espaces », sable |
-| Rose pâle | `--rose` | `#EFCBDD` | Accueil, chapitre 2 |
-| Vert sauge | `--sage` | `#C6D7BE` | Export, chapitre 3, ciel « ville » |
-| Ciel | `--sky` | `#DCE3FB` | Ciel « bord de l’eau », journée 4 |
+| Rôle           | Jeton         | Valeur    | Usage                                                                                   |
+| -------------- | ------------- | --------- | --------------------------------------------------------------------------------------- |
+| Fond principal | `--cream`     | `#FFF6E8` | Page, fonds clairs                                                                      |
+| Papier         | `--paper`     | `#FFFBF4` | Cartes postales, champs, tableau                                                        |
+| Encre          | `--ink`       | `#18392F` | Texte, pied de page, éléments verrouillés                                               |
+| Cobalt         | `--cobalt`    | `#3155E7` | Action principale (texte blanc, contraste ≈ 5,9:1), focus, partage                      |
+| Corail         | `--coral`     | `#EF725B` | **Décor uniquement** (soleil, repères de parcours), jamais du texte                     |
+| Corail encre   | `--coral-ink` | `#B2432F` | Texte corail : titres en italique, annotations (≈ 5,3:1 sur crème)                      |
+| Jaune soleil   | `--sun`       | `#F4CB54` | Petits accents seulement : pastilles, soleils des illustrations, logo du pied de page   |
+| Jaune doux     | `--sun-soft`  | `#F8E2A6` | Grandes surfaces jaunes : chapitre 1, plafond du budget, ciel « grands espaces », sable |
+| Rose pâle      | `--rose`      | `#EFCBDD` | Accueil, chapitre 2                                                                     |
+| Vert sauge     | `--sage`      | `#C6D7BE` | Export, chapitre 3, ciel « ville »                                                      |
+| Ciel           | `--sky`       | `#DCE3FB` | Ciel « bord de l’eau », journée 4                                                       |
 
 Sur les grandes surfaces colorées, le texte secondaire passe en `--ink-soft` (`#3E5A50`). Le gris ne descend donc jamais sous 4,5:1.
 
@@ -36,22 +36,22 @@ Sur les grandes surfaces colorées, le texte secondaire passe en `--ink-soft` (`
 
 Les couleurs des journées (`--day-*`) sont décoratives. Les statuts ont leurs propres couleurs. Ils sont **toujours** accompagnés d’une icône et d’un libellé, avec une bordure qui change de forme selon le statut :
 
-| Statut | Couleurs | Forme |
-| --- | --- | --- |
-| Dans le plafond | vert foncé `#17543A` / `#E1F0E5` | bordure pleine + coche |
-| Au-dessus du plafond, erreur | rouge `#9A1B12` / `#FCE3E0` | bordure pleine + triangle |
-| Impossible de conclure, inconnu | violet `#4A3F8F` / `#ECE9FB` | bordure **pointillée** + i |
-| À revoir, non enregistré | brun `#6B4500` / `#FFF3D1` | bordure **pointillée** + triangle |
+| Statut                          | Couleurs                         | Forme                             |
+| ------------------------------- | -------------------------------- | --------------------------------- |
+| Dans le plafond                 | vert foncé `#17543A` / `#E1F0E5` | bordure pleine + coche            |
+| Au-dessus du plafond, erreur    | rouge `#9A1B12` / `#FCE3E0`      | bordure pleine + triangle         |
+| Impossible de conclure, inconnu | violet `#4A3F8F` / `#ECE9FB`     | bordure **pointillée** + i        |
+| À revoir, non enregistré        | brun `#6B4500` / `#FFF3D1`       | bordure **pointillée** + triangle |
 
 Le violet de l’« inconnu » n’existe nulle part dans le décor : un budget incomplet ne ressemble ni à une réussite ni à un échec.
 
 ## Typographie
 
-| Rôle | Police | Secours |
-| --- | --- | --- |
-| Titres expressifs | Fraunces (variable, axes `opsz` et `SOFT`) | Iowan Old Style, Palatino, Georgia |
-| Interface, formulaires, chiffres | Instrument Sans | Segoe UI, system-ui |
-| Annotations de carnet | Caveat | Segoe Print, cursive |
+| Rôle                             | Police                                     | Secours                            |
+| -------------------------------- | ------------------------------------------ | ---------------------------------- |
+| Titres expressifs                | Fraunces (variable, axes `opsz` et `SOFT`) | Iowan Old Style, Palatino, Georgia |
+| Interface, formulaires, chiffres | Instrument Sans                            | Segoe UI, system-ui                |
+| Annotations de carnet            | Caveat                                     | Segoe Print, cursive               |
 
 Les polices sont chargées depuis Google Fonts avec `display=swap`. Sans réseau, l’interface reste lisible avec les polices de secours. Les montants utilisent des chiffres tabulaires.
 
@@ -84,12 +84,12 @@ Un oiseau vu de loin, dessiné en deux arcs (`BirdMark` dans `Chrome.jsx`), comm
 
 Inspirée du mouvement ambiant de Q’in Saba : une couche décorative fixe (`Ambience.jsx`) couvre presque toute la page, **par-dessus** le contenu, comme un voile transparent. Elle est fusionnée en `mix-blend-mode: multiply`, comme de l’encre sur du papier : elle teinte le fond sans jamais éclaircir le texte, qui reste lisible. Elle ne capte aucun clic (`pointer-events: none`), passe sous les toasts et les dialogues, et elle est masquée aux technologies d’assistance.
 
-| Ambiance | Quand | Effet |
-| --- | --- | --- |
-| Vagues | style « Au bord de l’eau » | trois couches de vagues transparentes sur les trois quarts bas de l’écran, qui glissent et montent comme une houle |
-| Neige | départ en décembre, janvier ou février (sauf bord de l’eau) | voile froid du haut vers le bas, flocons cobalt pâle qui tombent en oscillant sur toute la page |
-| Feuilles | style « Grands espaces » hors hiver | voile chaud, feuilles corail, soleil et sauge qui tombent en tournoyant sur toute la page |
-| Soleil | « Ville et culture », « Un peu de tout » hors hiver | halo chaud très léger sur toute la page, grand soleil pâle en haut à droite dont les rayons tournent lentement, quelques éclats qui montent |
+| Ambiance | Quand                                                       | Effet                                                                                                                                       |
+| -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vagues   | style « Au bord de l’eau »                                  | trois couches de vagues transparentes sur les trois quarts bas de l’écran, qui glissent et montent comme une houle                          |
+| Neige    | départ en décembre, janvier ou février (sauf bord de l’eau) | voile froid du haut vers le bas, flocons cobalt pâle qui tombent en oscillant sur toute la page                                             |
+| Feuilles | style « Grands espaces » hors hiver                         | voile chaud, feuilles corail, soleil et sauge qui tombent en tournoyant sur toute la page                                                   |
+| Soleil   | « Ville et culture », « Un peu de tout » hors hiver         | halo chaud très léger sur toute la page, grand soleil pâle en haut à droite dont les rayons tournent lentement, quelques éclats qui montent |
 
 Les vagues et les oiseaux de l’illustration de couverture bougent aussi légèrement. Un bouton sur la couverture met l’ambiance en pause (WCAG 2.2.2), et ce choix est mémorisé dans le navigateur. Si le système demande moins de mouvement, les particules disparaissent et les vagues ou le soleil restent immobiles. L’ambiance n’apparaît pas à l’impression.
 

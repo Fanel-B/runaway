@@ -29,23 +29,23 @@ Le détail est dans `JOURNAL_DES_MODIFICATIONS.md`.
 
 ## 2. Ce que j’ai décidé seul, et pourquoi
 
-| Décision | Pourquoi |
-| --- | --- |
-| Quota de 10 créations par heure et par client, plus 200 au total | Large pour un vrai groupe, mais un script est plafonné. La limite globale protège la base si l’adresse change. C’est réversible : tout passe par des variables d’environnement. |
-| Les requêtes invalides et les échecs du générateur ne comptent pas dans le quota | Ce qui remplit la base, ce sont les créations réussies. Un formulaire mal rempli ne doit pas bloquer un utilisateur. |
-| Aucune adresse IP dans les logs | Le quota en a besoin seulement en mémoire. Moins de données personnelles, une page de confidentialité plus simple et vraie. |
-| `CORS_ORIGINS` vide par défaut, et `*` fait échouer le démarrage | Échouer tôt plutôt qu’ouvrir l’API par erreur. En local, le proxy Vite suffit. |
-| Les voyages existants reçoivent la date de la migration comme dernière ouverture | Choix prudent : sinon des voyages anciens seraient devenus purgeables dès la migration. |
-| La purge ne fait que compter par défaut (`--apply` pour supprimer), et un voyage sans date n’est jamais supprimé | La suppression est irréversible, donc elle doit être demandée explicitement. |
-| Dernière ouverture rafraîchie au plus une fois par jour, sans changer la révision, et jamais par un mauvais secret | Pas d’écriture à chaque lecture, pas de faux conflit de révision, et un inconnu ne prolonge pas un voyage. |
-| `DELETE` sans `expected_revision` | Supprimer est définitif quelle que soit la version affichée. Une suppression déjà faite ailleurs (404) est traitée comme réussie dans l’interface. |
-| Confirmation par une case « Je comprends… » en plus du bouton | Rend l’irréversibilité explicite sans saisie fastidieuse. |
-| Un montant absent s’affiche « inconnu » au lieu d’un tiret | Conséquence de la règle sur les tirets cadratins. Le mot dit mieux qu’il manque. |
-| Ta base locale **n’a pas été migrée** en 0003 | Tu m’as demandé de ne pas toucher ta base. La migration a été testée sur une copie, et la commande est dans `MISE_A_JOUR_WINDOWS.md`. |
-| ESLint 9 et non 10 | `eslint-plugin-react` n’accepte pas encore ESLint 10. |
-| `react/prop-types` désactivée | React 19 ne vérifie plus les `propTypes`. Les ajouter serait du code mort. |
-| Prettier à 120 colonnes, Markdown inclus, reformatage dans un commit séparé | Proche du style existant, et la relecture des vraies corrections reste lisible. |
-| Serveurs de développement arrêtés en fin de nuit | Ceux d’hier faisaient tourner l’ancienne API avec ta base en 0002, ce qui ne marche pas avec la nouvelle interface. Il suffit de les relancer après la migration. |
+| Décision                                                                                                           | Pourquoi                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Quota de 10 créations par heure et par client, plus 200 au total                                                   | Large pour un vrai groupe, mais un script est plafonné. La limite globale protège la base si l’adresse change. C’est réversible : tout passe par des variables d’environnement. |
+| Les requêtes invalides et les échecs du générateur ne comptent pas dans le quota                                   | Ce qui remplit la base, ce sont les créations réussies. Un formulaire mal rempli ne doit pas bloquer un utilisateur.                                                            |
+| Aucune adresse IP dans les logs                                                                                    | Le quota en a besoin seulement en mémoire. Moins de données personnelles, une page de confidentialité plus simple et vraie.                                                     |
+| `CORS_ORIGINS` vide par défaut, et `*` fait échouer le démarrage                                                   | Échouer tôt plutôt qu’ouvrir l’API par erreur. En local, le proxy Vite suffit.                                                                                                  |
+| Les voyages existants reçoivent la date de la migration comme dernière ouverture                                   | Choix prudent : sinon des voyages anciens seraient devenus purgeables dès la migration.                                                                                         |
+| La purge ne fait que compter par défaut (`--apply` pour supprimer), et un voyage sans date n’est jamais supprimé   | La suppression est irréversible, donc elle doit être demandée explicitement.                                                                                                    |
+| Dernière ouverture rafraîchie au plus une fois par jour, sans changer la révision, et jamais par un mauvais secret | Pas d’écriture à chaque lecture, pas de faux conflit de révision, et un inconnu ne prolonge pas un voyage.                                                                      |
+| `DELETE` sans `expected_revision`                                                                                  | Supprimer est définitif quelle que soit la version affichée. Une suppression déjà faite ailleurs (404) est traitée comme réussie dans l’interface.                              |
+| Confirmation par une case « Je comprends… » en plus du bouton                                                      | Rend l’irréversibilité explicite sans saisie fastidieuse.                                                                                                                       |
+| Un montant absent s’affiche « inconnu » au lieu d’un tiret                                                         | Conséquence de la règle sur les tirets cadratins. Le mot dit mieux qu’il manque.                                                                                                |
+| Ta base locale **n’a pas été migrée** en 0003                                                                      | Tu m’as demandé de ne pas toucher ta base. La migration a été testée sur une copie, et la commande est dans `MISE_A_JOUR_WINDOWS.md`.                                           |
+| ESLint 9 et non 10                                                                                                 | `eslint-plugin-react` n’accepte pas encore ESLint 10.                                                                                                                           |
+| `react/prop-types` désactivée                                                                                      | React 19 ne vérifie plus les `propTypes`. Les ajouter serait du code mort.                                                                                                      |
+| Prettier à 120 colonnes, Markdown inclus, reformatage dans un commit séparé                                        | Proche du style existant, et la relecture des vraies corrections reste lisible.                                                                                                 |
+| Serveurs de développement arrêtés en fin de nuit                                                                   | Ceux d’hier faisaient tourner l’ancienne API avec ta base en 0002, ce qui ne marche pas avec la nouvelle interface. Il suffit de les relancer après la migration.               |
 
 ## 3. Ce que je n’ai pas réussi à faire
 

@@ -4,7 +4,22 @@ import { EditStopDialog } from './EditStopDialog.jsx';
 import { Icon } from './Icon.jsx';
 
 const DAY_TONES = ['day-sun', 'day-rose', 'day-sage', 'day-sky', 'day-peach'];
-const NUMBERS = ['un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze'];
+const NUMBERS = [
+  'un',
+  'deux',
+  'trois',
+  'quatre',
+  'cinq',
+  'six',
+  'sept',
+  'huit',
+  'neuf',
+  'dix',
+  'onze',
+  'douze',
+  'treize',
+  'quatorze',
+];
 
 // Group by moment only when the data says so; no hour is ever invented.
 function groupByMoment(stops) {
@@ -21,12 +36,22 @@ function StopEntry({ stop, canEdit, busy, onEdit, onLock, onReviewed }) {
     <li className={`stop ${stop.locked ? 'stop-locked' : ''}`}>
       <span className="stop-node" aria-hidden="true" />
       <div className="stop-body">
-        <p className="stop-meta"><span className="stop-category">{CATEGORIES[stop.category]}</span> · {stop.city}</p>
+        <p className="stop-meta">
+          <span className="stop-category">{CATEGORIES[stop.category]}</span> · {stop.city}
+        </p>
         <h4 className="stop-name">{stop.name}</h4>
         <p className="stop-notes">{stop.description}</p>
         <p className="tags">
-          {stop.locked && <span className="tag tag-locked"><Icon name="lock" size={14} /> On garde</span>}
-          {stop.needs_review && <span className="tag tag-review"><Icon name="alert" size={14} /> Coûts et trajets associés à revoir</span>}
+          {stop.locked && (
+            <span className="tag tag-locked">
+              <Icon name="lock" size={14} /> On garde
+            </span>
+          )}
+          {stop.needs_review && (
+            <span className="tag tag-review">
+              <Icon name="alert" size={14} /> Coûts et trajets associés à revoir
+            </span>
+          )}
           <span className="tag tag-quiet">Lieu non vérifié</span>
         </p>
         {canEdit && (
@@ -36,8 +61,13 @@ function StopEntry({ stop, canEdit, busy, onEdit, onLock, onReviewed }) {
                 <Icon name="edit" size={16} /> Modifier
               </button>
             )}
-            <button type="button" className={`btn btn-small ${stop.locked ? 'btn-quiet' : 'btn-ink'}`} onClick={onLock}
-              disabled={busy} aria-pressed={stop.locked}>
+            <button
+              type="button"
+              className={`btn btn-small ${stop.locked ? 'btn-quiet' : 'btn-ink'}`}
+              onClick={onLock}
+              disabled={busy}
+              aria-pressed={stop.locked}
+            >
               <Icon name={stop.locked ? 'unlock' : 'lock'} size={16} /> {stop.locked ? 'Déverrouiller' : 'On garde'}
             </button>
             {stop.needs_review && (
@@ -76,22 +106,41 @@ export function Programme({ trip, canEdit, mutate, announce }) {
   return (
     <div className="programme">
       <div className="filters" role="group" aria-label="Afficher les journées">
-        <button type="button" className="chip" aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>Tout le voyage</button>
+        <button type="button" className="chip" aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>
+          Tout le voyage
+        </button>
         {days.map(day => (
-          <button key={day.number} type="button" className="chip" aria-pressed={filter === day.number} onClick={() => setFilter(day.number)}>
+          <button
+            key={day.number}
+            type="button"
+            className="chip"
+            aria-pressed={filter === day.number}
+            onClick={() => setFilter(day.number)}
+          >
             J{day.number}
           </button>
         ))}
       </div>
-      {!canEdit && <p className="notice notice-info"><Icon name="eye" /> Lecture seule : seul l’organisateur peut modifier ou verrouiller.</p>}
+      {!canEdit && (
+        <p className="notice notice-info">
+          <Icon name="eye" /> Lecture seule : seul l’organisateur peut modifier ou verrouiller.
+        </p>
+      )}
 
       {shown.map(day => (
-        <article key={day.number} className={`day-chapter ${DAY_TONES[(day.number - 1) % DAY_TONES.length]}`} aria-labelledby={`day-${day.number}`}>
+        <article
+          key={day.number}
+          className={`day-chapter ${DAY_TONES[(day.number - 1) % DAY_TONES.length]}`}
+          aria-labelledby={`day-${day.number}`}
+        >
           <header className="day-head">
             <p className="day-label">Chapitre {NUMBERS[day.number - 1]}</p>
-            <p className="day-number" aria-hidden="true">{String(day.number).padStart(2, '0')}</p>
+            <p className="day-number" aria-hidden="true">
+              {String(day.number).padStart(2, '0')}
+            </p>
             <h3 id={`day-${day.number}`} className="day-title">
-              <span className="sr-only">Jour {day.number} : </span>{day.title}
+              <span className="sr-only">Jour {day.number} : </span>
+              {day.title}
             </h3>
             <p className="day-date">{dayDate(trip.preferences.start_date, day.number)}</p>
           </header>
@@ -104,16 +153,34 @@ export function Programme({ trip, canEdit, mutate, announce }) {
                     const key = `${day.number}-${index}`;
                     const base = `/days/${day.number}/stops/${index}`;
                     return (
-                      <StopEntry key={key} stop={stop} canEdit={canEdit} busy={busyKey === key}
+                      <StopEntry
+                        key={key}
+                        stop={stop}
+                        canEdit={canEdit}
+                        busy={busyKey === key}
                         onEdit={() => setEditing({ day: day.number, index, stop })}
-                        onLock={() => run(key, `${base}/lock`, 'PUT', { locked: !stop.locked },
-                          stop.locked ? `« ${stop.name} » est déverrouillé.` : `« ${stop.name} » est gardé et verrouillé.`)}
-                        onReviewed={() => run(key, base, 'PATCH', { review_done: true }, `« ${stop.name} » est marqué comme revu.`)} />
+                        onLock={() =>
+                          run(
+                            key,
+                            `${base}/lock`,
+                            'PUT',
+                            { locked: !stop.locked },
+                            stop.locked
+                              ? `« ${stop.name} » est déverrouillé.`
+                              : `« ${stop.name} » est gardé et verrouillé.`,
+                          )
+                        }
+                        onReviewed={() =>
+                          run(key, base, 'PATCH', { review_done: true }, `« ${stop.name} » est marqué comme revu.`)
+                        }
+                      />
                     );
                   })}
                 </ol>
                 {error && items.some(({ index }) => error.key === `${day.number}-${index}`) && (
-                  <p className="notice notice-danger" role="alert"><Icon name="alert" /> {error.message}</p>
+                  <p className="notice notice-danger" role="alert">
+                    <Icon name="alert" /> {error.message}
+                  </p>
                 )}
               </section>
             ))}
