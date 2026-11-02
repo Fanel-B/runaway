@@ -9,7 +9,13 @@
 | `t3-fiabilisation` | Tranche 3 : API déployable, suppression, conservation, confidentialité | Poussée, PR #2 vers `essai` ouverte            |
 | `t4-outillage`     | ESLint, Prettier, lint bloquant et audit en avertissement dans la CI   | Poussée, PR #3 vers `t3-fiabilisation` ouverte |
 
-Les trois pull requests ont été ouvertes le 1er novembre avec `gh` (#1, #2, #3), à relire et fusionner dans cet ordre. La CI est verte sur les trois branches : 67 tests sur SQLite et sur PostgreSQL 17, lint, build, et audit en simple avertissement.
+Les trois pull requests ont été ouvertes le 1er novembre avec `gh`. La CI est verte sur les trois branches : 67 tests sur SQLite et sur PostgreSQL 17, lint, build, et audit en simple avertissement.
+
+**Ordre de fusion : #3, puis #2, puis #1.** Les PR sont empilées (`t4-outillage` → `t3-fiabilisation` → `essai` → `main`), donc on fusionne en partant de la plus profonde. Chaque fusion enrichit la PR du dessus, et `main` reçoit les trois tranches d’un coup. Commencer par #1 ne ferait monter que la tranche 2 sur `main` et obligerait à ouvrir une quatrième PR.
+
+## Méthode à partir de maintenant
+
+Une fois les trois PR fusionnées, supprimer les branches `essai`, `t3-fiabilisation` et `t4-outillage`. Ensuite, **une branche par tranche, créée depuis `main`, et une PR directement vers `main`**. Plus de branche d’intégration intermédiaire : c’est elle qui a créé cette pile à trois niveaux.
 
 ## Terminé
 
@@ -30,8 +36,8 @@ Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 ## Avant de reprendre
 
 1. **Migrer la base locale en 0003** (`MISE_A_JOUR_WINDOWS.md`, étape 2). Sans cela, la nouvelle API répond 503. Je ne l’ai pas fait : la migration a seulement été testée sur une copie (39 voyages conservés à l’identique).
-2. Relire les pull requests #1, #2 et #3.
-3. La CI a validé PostgreSQL (67 tests) ; la revérifier après chaque fusion.
+2. Relire puis fusionner #3, #2 et #1, dans cet ordre.
+3. La CI a validé PostgreSQL (67 tests) ; la revérifier sur `main` après la dernière fusion.
 
 ## Restant
 
@@ -47,12 +53,12 @@ Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 ## Blocages connus
 
 - Aucun blocage technique.
-- Décisions qui te reviennent : l’ordre de fusion des PR, l’hébergement, la durée de conservation définitive, le contact à publier.
+- Décisions qui te reviennent : l’hébergement, la durée de conservation définitive, le contact à publier.
 - Outils absents sur ce poste : Docker et `psql` (PostgreSQL n’est testé que par la CI). `gh` est installé et connecté.
 
 ## Prochaine action
 
-Migrer la base locale, ouvrir la PR `essai` vers `main`, la relire avec la CI au vert, puis faire de même pour `t3-fiabilisation`.
+Migrer la base locale en 0003, fusionner #3 puis #2 puis #1, supprimer les trois branches, puis créer la branche de la prochaine tranche depuis `main`.
 
 ## Commandes courtes (PowerShell, depuis `runaway\backend`)
 
