@@ -101,3 +101,65 @@ Les vagues et les oiseaux de l’illustration de couverture bougent aussi légè
 4. Focus visible partout : anneau cobalt de 3 px, jaune soleil sur fond sombre ou cobalt.
 5. Pas de cartes identiques en série : chaque écran a sa propre composition (postales, tickets, chapitres, encarts du carnet).
 6. Les mentions d’honnêteté (simulé, non vérifié, fictif) sont visibles sans être alarmistes.
+
+## Accessibilité
+
+Mesures faites le 11 novembre 2026 dans Chrome (headless, piloté par un script local hors dépôt), sur l’application réelle. Le seuil visé est le WCAG 2.1 AA : 4,5:1 pour le texte courant, 3:1 pour le grand texte (24 px et plus, ou 18,66 px et plus en gras).
+
+### Contrastes
+
+2 175 textes mesurés sur 21 états de l’application (accueil, formulaire et ses erreurs, programme, budget, carnet, dialogues, confidentialité, page d’erreur, vue lecteur). Pour chaque texte : couleur calculée, fond effectif, opacités composées. axe-core a tourné sur les mêmes états : **0 violation**. Il classe certains textes en « à vérifier » parce qu’ils se chevauchent : la mesure ci-dessous les couvre.
+
+| Texte                                                                                | Sur                                       | Contraste                 |
+| ------------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------- |
+| `--ink`                                                                              | `--cream`, `--paper`                      | 11,77 ; 12,23             |
+| `--ink`                                                                              | `--sage`, `--rose`, `--sun-soft`, `--sky` | 8,33 ; 8,56 ; 9,86 ; 9,86 |
+| `--ink-soft`                                                                         | `--cream`, `--paper`                      | 7,04 ; 7,31               |
+| `--ink-soft`                                                                         | `--sun-soft`, `--sky`, `--rose`, `--sage` | 5,90 ; 5,90 ; 5,12 ; 4,98 |
+| `--muted`                                                                            | `--cream`, `--paper`                      | 6,15 ; 6,39               |
+| `--coral-ink`                                                                        | `--cream`, `--paper`                      | 5,24 ; 5,45               |
+| `--coral-ink`, **grand texte seulement**                                             | `--sun-soft`, `--rose`, `--sage`          | **4,39 ; 3,82 ; 3,71**    |
+| `--cobalt`                                                                           | `--paper`                                 | 5,68                      |
+| blanc, `--cream`                                                                     | `--cobalt`                                | 5,86 ; 5,47               |
+| `--sun`, `--cream`                                                                   | `--ink`                                   | 8,12 ; 11,77              |
+| `--ink`                                                                              | `--sun`                                   | 8,12                      |
+| `--danger-ink`                                                                       | `--danger-bg`, `--cream`, `--paper`       | 6,77 ; 7,72 ; 8,02        |
+| blanc                                                                                | `--danger-ink`                            | 8,27                      |
+| `--ok-ink` / `--ok-bg`, `--unknown-ink` / `--unknown-bg`, `--warn-ink` / `--warn-bg` |                                           | 7,52 ; 7,34 ; 7,67        |
+
+**Corrigé :**
+
+- Les textes indicatifs des champs (`::placeholder`) étaient à 3,52:1. Ils utilisent maintenant `--muted` (6,39:1), un jeton existant.
+- Sous les vagues, `--ink-soft` sur `--sage` tombait à 4,49:1. La vague de devant passe de 5 % à 4 % d’opacité.
+
+**Non corrigé, à trancher :** `--coral-ink` sur les fonds colorés reste sous 4,5:1 (4,39 ; 3,82 ; 3,71). Cela concerne « Un départ ensemble. » sur l’accueil et les « Chapitre un » manuscrits. Ce sont de grands textes, donc conformes au seuil de 3:1 du WCAG AA, mais sous les 4,5:1 demandés. Passer à 4,5:1 obligerait à assombrir nettement le corail, ou à l’abandonner sur ces fonds : ce serait toucher à l’identité visuelle, donc je n’y ai pas touché.
+
+**Sous le voile animé :** le voile est fusionné en `multiply`. Son effet sur chaque couple a été calculé à partir des couleurs mesurées, pour les cinq cas les plus sombres (vagues à deux et trois couches, neige, feuilles, soleil). Aucun couple ne passe sous son seuil WCAG. C’est un calcul, pas une mesure au pixel. Une feuille ou un flocon qui passe sur un mot n’est pas pris en compte : ces particules sont temporaires.
+
+Les boutons inactifs sont exclus de la mesure, comme le prévoit le WCAG.
+
+### Clavier
+
+236 arrêts de focus inspectés avec de vraies touches, à 1440 et 390 px : Tab, Maj+Tab, Entrée, Échap, flèches dans les onglets. Pour chaque arrêt : anneau visible, contraste de l’anneau (3:1 minimum), élément dans l’écran, non caché par la barre collante, non recouvert.
+
+| Défaut trouvé                                                                                                                                                                  | Correction                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Le focus disparaissait quand un bouton se désactivait pendant l’enregistrement (« On garde », « Modifier », « Appliquer », « Enregistrer le budget », « Explorer un exemple ») | `aria-disabled` au lieu de `disabled` : le bouton garde le focus, et les clics sont ignorés pendant l’envoi |
+| Le focus tombait hors du dialogue au passage à la comparaison, et au retour à la saisie                                                                                        | Le focus suit l’étape : tableau de comparaison, puis champ « Nom »                                          |
+| Focus perdu après « C’est revu » (le bouton disparaît)                                                                                                                         | Le focus va au bouton suivant de la même activité                                                           |
+| Focus perdu après « Oublier » dans les voyages récents                                                                                                                         | Le focus va au titre de la section                                                                          |
+| Champs de date : focus invisible sur le jour, le mois et l’année                                                                                                               | Anneau sur tout le champ avec `:focus-within`                                                               |
+| En développement, le focus partait sur `main` au chargement, et le premier Tab sautait l’en-tête et le lien d’évitement                                                        | L’effet compare la route au lieu d’un drapeau de premier rendu                                              |
+| axe : niveaux de titres sautés dans les onglets (`h1` puis `h3`)                                                                                                               | Un `h2` réservé aux lecteurs d’écran par onglet, sans effet visuel                                          |
+
+**Vérifié sans défaut :** lien d’évitement vers le contenu, focus sur la page après chaque navigation, flèches dans les onglets, focus enfermé dans les dialogues, Échap qui rend le focus au bouton d’origine, focus sur le bouton « Modifier » après « Appliquer ».
+
+**Reste :** à 390 px, le message temporaire en bas d’écran (4,5 secondes) peut recouvrir un bouton qui vient de recevoir le focus. Une marge de défilement réduit le cas sans l’éliminer.
+
+### Débordement horizontal
+
+Aucun débordement à 390, 768 et 1440 px sur 18 écrans mesurés : accueil, formulaire, confidentialité, programme, budget et carnet à chaque largeur.
+
+### Non vérifié
+
+Pas de lecteur d’écran réel (NVDA, VoiceOver), pas de Safari ni de Firefox, pas de téléphone réel. Le script de mesure n’est pas dans la CI.

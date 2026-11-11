@@ -278,7 +278,7 @@ export function TripForm({ draft }) {
             </div>
           </fieldset>
 
-          <button type="submit" className="btn btn-primary btn-block" disabled={busy} aria-busy={busy}>
+          <button type="submit" className="btn btn-primary btn-block" aria-disabled={busy} aria-busy={busy}>
             {busy ? (
               'Préparation du carnet…'
             ) : (

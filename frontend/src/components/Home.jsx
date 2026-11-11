@@ -61,6 +61,8 @@ export function Home({ onInspiration, flash = '', onFlashDone }) {
   function forget(id) {
     forgetTrip(id);
     setRecent(listTrips());
+    // The button that held the focus is gone.
+    document.getElementById('recent-title')?.focus();
   }
 
   return (
@@ -86,7 +88,7 @@ export function Home({ onInspiration, flash = '', onFlashDone }) {
             <a className="btn btn-primary" href="#nouveau">
               Préparer notre voyage <Icon name="arrow" />
             </a>
-            <button type="button" className="btn btn-ghost" onClick={openExample} disabled={busy} aria-busy={busy}>
+            <button type="button" className="btn btn-ghost" onClick={openExample} aria-disabled={busy} aria-busy={busy}>
               {busy ? 'Ouverture de l’exemple…' : 'Explorer un exemple'}
             </button>
           </div>
@@ -150,7 +152,7 @@ export function Home({ onInspiration, flash = '', onFlashDone }) {
       <section className="recent" aria-labelledby="recent-title">
         <div className="section-head">
           <p className="eyebrow">Sur ce navigateur</p>
-          <h2 id="recent-title" className="display-sm">
+          <h2 id="recent-title" className="display-sm" tabIndex={-1}>
             Vos voyages récents
           </h2>
           <p className="muted">

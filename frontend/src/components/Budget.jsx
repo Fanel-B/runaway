@@ -32,14 +32,15 @@ function checkDraft(draft) {
 }
 
 function Conclusion({ scenario }) {
-  if (scenario.within_budget === true) {
+  // No verdict on an incomplete budget, whatever the data says.
+  if (scenario.complete && scenario.within_budget === true) {
     return (
       <p className="status status-ok">
         <Icon name="check" size={16} /> Dans le plafond
       </p>
     );
   }
-  if (scenario.within_budget === false) {
+  if (scenario.complete && scenario.within_budget === false) {
     return (
       <p className="status status-danger">
         <Icon name="alert" size={16} /> Au-dessus du plafond
@@ -86,6 +87,7 @@ export function Budget({ trip, canEdit, mutate, announce }) {
 
   async function save(event) {
     event.preventDefault();
+    if (!dirty || busy) return;
     const found = checkDraft(draft);
     setErrors(found);
     setFailure('');
@@ -264,15 +266,17 @@ export function Budget({ trip, canEdit, mutate, announce }) {
             <button
               type="button"
               className="btn btn-quiet"
-              disabled={!dirty || busy}
+              aria-disabled={!dirty || busy}
               onClick={() => {
+                if (!dirty || busy) return;
                 setDraft(toDraft(trip.budget_lines));
                 setErrors({});
               }}
             >
               Annuler les modifications
             </button>
-            <button type="submit" className="btn btn-primary" disabled={!dirty || busy} aria-busy={busy}>
+            {/* aria-disabled: once saved, the button must keep the keyboard focus. */}
+            <button type="submit" className="btn btn-primary" aria-disabled={!dirty || busy} aria-busy={busy}>
               {busy ? 'Enregistrement…' : 'Enregistrer le budget'}
             </button>
           </div>

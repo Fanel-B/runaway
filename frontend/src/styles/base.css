@@ -7,6 +7,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-padding-top: 80px;
+  /* Keeps a focused control above the temporary message at the bottom of the screen. */
+  scroll-padding-bottom: 88px;
 }
 
 body {
@@ -65,6 +67,8 @@ code {
   border-radius: 4px;
 }
 
+/* A date field focuses its inner day, month and year parts: :focus-visible never reaches the field. */
+input[type='date']:focus-within,
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
@@ -208,6 +212,11 @@ code {
 .btn:hover:not(:disabled) {
   transform: translateY(-1px);
 }
+.btn[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.55;
+  pointer-events: none;
+}
 .btn:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -346,7 +355,7 @@ textarea[aria-invalid='true'] {
 }
 input::placeholder,
 textarea::placeholder {
-  color: #7a8a83;
+  color: var(--muted);
 }
 .field-row {
   display: grid;

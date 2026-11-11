@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { CATEGORIES } from '../lib/format.js';
 import { Dialog } from './Dialog.jsx';
 import { Icon } from './Icon.jsx';
@@ -31,6 +31,9 @@ export function EditStopDialog({ target, onClose, mutate, announce }) {
     }
   }
 
+  // Each step replaces the previous one: the focus follows instead of falling out of the dialog.
+  const focusOnArrival = useCallback(node => node?.focus(), []);
+
   const ready = !!(target && form);
   const changes = ready ? FIELDS.filter(({ key }) => form[key].trim() !== target.stop[key]) : [];
 
@@ -47,6 +50,7 @@ export function EditStopDialog({ target, onClose, mutate, announce }) {
   }
 
   async function apply() {
+    if (busy) return;
     setBusy(true);
     setFailure(null);
     try {
@@ -98,6 +102,7 @@ export function EditStopDialog({ target, onClose, mutate, announce }) {
               ) : (
                 <input
                   id={`stop-${key}`}
+                  ref={key === 'name' ? focusOnArrival : undefined}
                   maxLength={max}
                   value={form[key]}
                   aria-invalid={!!errors[key]}
@@ -125,7 +130,7 @@ export function EditStopDialog({ target, onClose, mutate, announce }) {
 
       {ready && step === 'compare' && (
         <>
-          <div className="diff" role="table" aria-label="Avant et après">
+          <div className="diff" role="table" aria-label="Avant et après" tabIndex={-1} ref={focusOnArrival}>
             <div className="diff-row diff-head" role="row">
               <span role="columnheader">Champ</span>
               <span role="columnheader">Avant</span>
@@ -159,10 +164,15 @@ export function EditStopDialog({ target, onClose, mutate, announce }) {
             </p>
           )}
           <div className="dialog-actions">
-            <button type="button" className="btn btn-quiet" onClick={() => setStep('edit')} disabled={busy}>
+            <button
+              type="button"
+              className="btn btn-quiet"
+              onClick={busy ? undefined : () => setStep('edit')}
+              aria-disabled={busy}
+            >
               <Icon name="back" /> Revenir à la saisie
             </button>
-            <button type="button" className="btn btn-primary" onClick={apply} disabled={busy} aria-busy={busy}>
+            <button type="button" className="btn btn-primary" onClick={apply} aria-disabled={busy} aria-busy={busy}>
               {busy ? (
                 'Enregistrement…'
               ) : (

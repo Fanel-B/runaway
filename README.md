@@ -128,7 +128,7 @@ Les tests utilisent une base SQLite temporaire initialisée par les vraies migra
 
 ### Qualité du code frontend
 
-Depuis `frontend` : `npm run lint` (ESLint, configuration recommandée React et hooks), `npm run format` pour formater tout le dépôt avec Prettier, `npm run format:check` pour vérifier sans modifier. La CI bloque sur le lint et signale `npm audit` en simple avertissement.
+Depuis `frontend` : `npm run test` (Vitest et Testing Library, bloquant en CI), `npm run lint` (ESLint, configuration recommandée React et hooks), `npm run format` pour formater tout le dépôt avec Prettier, `npm run format:check` pour vérifier sans modifier. La CI bloque sur les tests et le lint, et signale `npm audit` en simple avertissement. Les mesures d’accessibilité sont dans `docs/DIRECTION_ARTISTIQUE.md`.
 
 ## Organisation
 

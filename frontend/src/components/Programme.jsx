@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CATEGORIES, MOMENTS, dayDate } from '../lib/format.js';
 import { EditStopDialog } from './EditStopDialog.jsx';
 import { Icon } from './Icon.jsx';
@@ -32,6 +32,21 @@ function groupByMoment(stops) {
 }
 
 function StopEntry({ stop, canEdit, busy, onEdit, onLock, onReviewed }) {
+  // aria-disabled, not disabled: a disabled button would drop the keyboard focus while saving.
+  const lockButton = useRef(null);
+  const reviewing = useRef(false);
+
+  // « C’est revu » disappears once done: the focus moves to the next action of the same activity.
+  useEffect(() => {
+    if (reviewing.current && !stop.needs_review) lockButton.current?.focus();
+    reviewing.current = false;
+  }, [stop.needs_review]);
+
+  function review() {
+    reviewing.current = true;
+    onReviewed();
+  }
+
   return (
     <li className={`stop ${stop.locked ? 'stop-locked' : ''}`}>
       <span className="stop-node" aria-hidden="true" />
@@ -57,21 +72,32 @@ function StopEntry({ stop, canEdit, busy, onEdit, onLock, onReviewed }) {
         {canEdit && (
           <div className="stop-actions">
             {!stop.locked && (
-              <button type="button" className="btn btn-small btn-ghost" onClick={onEdit} disabled={busy}>
+              <button
+                type="button"
+                className="btn btn-small btn-ghost"
+                onClick={busy ? undefined : onEdit}
+                aria-disabled={busy}
+              >
                 <Icon name="edit" size={16} /> Modifier
               </button>
             )}
             <button
               type="button"
               className={`btn btn-small ${stop.locked ? 'btn-quiet' : 'btn-ink'}`}
-              onClick={onLock}
-              disabled={busy}
+              ref={lockButton}
+              onClick={busy ? undefined : onLock}
+              aria-disabled={busy}
               aria-pressed={stop.locked}
             >
               <Icon name={stop.locked ? 'unlock' : 'lock'} size={16} /> {stop.locked ? 'Déverrouiller' : 'On garde'}
             </button>
             {stop.needs_review && (
-              <button type="button" className="btn btn-small btn-quiet" onClick={onReviewed} disabled={busy}>
+              <button
+                type="button"
+                className="btn btn-small btn-quiet"
+                onClick={busy ? undefined : review}
+                aria-disabled={busy}
+              >
                 <Icon name="check" size={16} /> C’est revu
               </button>
             )}
