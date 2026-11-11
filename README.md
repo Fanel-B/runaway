@@ -130,6 +130,10 @@ Les tests utilisent une base SQLite temporaire initialisée par les vraies migra
 
 Depuis `frontend` : `npm run test` (Vitest et Testing Library, bloquant en CI), `npm run lint` (ESLint, configuration recommandée React et hooks), `npm run format` pour formater tout le dépôt avec Prettier, `npm run format:check` pour vérifier sans modifier. La CI bloque sur les tests et le lint, et signale `npm audit` en simple avertissement. Les mesures d’accessibilité sont dans `docs/DIRECTION_ARTISTIQUE.md`.
 
+## Déploiement
+
+Rien n’est déployé. Les fichiers sont prêts et testés sur un runner GitHub Actions : images Docker, `compose.prod.yaml`, Caddy, scripts de déploiement, de sauvegarde et de restauration. La marche à suivre est dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
+
 ## Organisation
 
 ```text
@@ -158,7 +162,7 @@ docs/                      décisions techniques et direction artistique
 - **Limites de la clé organisateur dans le navigateur** : elle disparaît si l’on vide les données du site ou en navigation privée, elle n’est pas synchronisée entre appareils, et toute personne utilisant ce profil de navigateur peut modifier le voyage. Elle peut être affichée, sauvegardée puis recollée dans l’onglet Carnet. Une vraie authentification la remplacera.
 - Les voyages créés avant la migration 0002 n’ont pas de clé d’édition : leur lien de lecture continue de fonctionner, sans jamais devenir un droit d’édition.
 - Le programme reste stocké comme un document JSON validé. Les révisions protègent contre l’écrasement, mais aucun historique n’est encore conservé.
-- **Avant une mise en ligne publique**, il manque encore : HTTPS et l’hébergement eux-mêmes, un quota partagé si plusieurs instances tournent, la révocation des liens, la purge planifiée, et un contact du responsable sur la page de confidentialité.
+- **Avant une mise en ligne publique**, il manque encore : un domaine et un hébergement, un quota partagé si plusieurs instances tournent, la révocation des liens, la purge planifiée, et un contact du responsable sur la page de confidentialité.
 
 Je compléterai la partie « difficultés rencontrées » après avoir relu, exécuté et modifié cette tranche moi-même. Je ne revendique pas encore une maîtrise de FastAPI, Alembic ou du déploiement PostgreSQL.
 

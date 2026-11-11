@@ -2,6 +2,43 @@
 
 Chaque entrée indique ce qui a changé, pourquoi, les fichiers concernés, comment l’essayer, ce qui a **réellement** été vérifié, et les limites qui restent.
 
+## 11 novembre 2026 : Préparation du déploiement (sans déployer)
+
+Branche `t5-preparation`, partie de `t4-tests`. Rien n’a été déployé, aucun serveur n’a été touché.
+
+### Changements
+
+- **Images** : `backend/Dockerfile` (63 Mo, sans outils de test, uid 10001) et `frontend/Dockerfile` (25 Mo, site compilé servi par nginx non privilégié, uid 101). Aucun secret à l’intérieur : tout est lu dans l’environnement.
+- **`compose.prod.yaml`**, distinct de `compose.yaml` : proxy, site, API, PostgreSQL 17. Seul le proxy publie des ports, la base est sur un réseau interne.
+- **`deploy/Caddyfile`** : HTTPS automatique avec Caddy, un seul domaine, donc pas de CORS, aucun journal d’accès.
+- **Le piège du quota** : uvicorn tourne avec `--proxy-headers --forwarded-allow-ips 172.30.0.10`, l’adresse fixe du proxy.
+- **`deploy/deploy.sh`** : récupérer, construire, sauvegarder, migrer, redémarrer, vérifier.
+- **`deploy/backup.sh`** et **`deploy/restore.sh`** : sauvegarde relue avant d’être validée, restauration refusée sans `--yes` et précédée d’une copie de sécurité.
+- **`docs/DEPLOIEMENT.md`** : marche à suivre sur un VPS, variables, retour arrière, passage à deux domaines, ce qu’il te reste à décider.
+- **CI `Déploiement à blanc`** : construit et lance toute la pile sur un runner, puis la teste. Elle ne se déclenche que si les fichiers de déploiement changent.
+
+Fichiers : `backend/Dockerfile`, `backend/.dockerignore`, `frontend/Dockerfile`, `frontend/nginx.conf`, `.dockerignore`, `.gitattributes`, `.gitignore`, `compose.prod.yaml`, `deploy/*`, `docs/DEPLOIEMENT.md`, `.github/workflows/deploy-check.yml`, `README.md`.
+
+### Pour essayer
+
+Sur une machine avec Docker, avec un `.env.prod` jetable (`DOMAIN=localhost`, `RATE_LIMIT_CREATIONS_PER_IP=3`) : `deploy/deploy.sh <commit>`, puis `RUNAWAY_VERSION=<commit court> deploy/test-stack.sh`, puis `BACKUP_DIR=/tmp/sauvegardes deploy/test-backup-restore.sh`. Sinon, l’onglet Actions de GitHub montre le workflow `Déploiement à blanc`.
+
+### Tests réellement exécutés
+
+**Docker n’est pas disponible sur ce poste (ni Docker Desktop, ni WSL).** Tous les tests ci-dessous ont tourné sur un runner GitHub Actions, avec les vrais fichiers de déploiement et le PostgreSQL du compose. Ce n’est donc pas « en local » au sens de ton poste.
+
+- **Cycle sauvegarde puis restauration** : 17 voyages en base (10 créés par ce test via l’API publique, 7 par le test précédent), dont un budget modifié. Sauvegarde de **7 394 octets en 245 ms**, droits 600. Table vidée, voyage détruit lu en 404. Restauration refusée sans `--yes`, puis réalisée en **8 140 ms** (copie de sécurité et redémarrage de l’API compris). **Empreinte MD5 de toute la table identique avant et après**, migration 0003 conservée, et lecture avec l’ancienne clé en 200.
+- **Pile complète : 38 contrôles réussis** : redirection HTTPS (308), site et API sur un seul domaine, en-têtes de sécurité, API et base non publiées sur l’hôte, base injoignable depuis le réseau public, utilisateurs non privilégiés, mot de passe absent des images et de leur historique, pas d’outils de test dans l’image API, `pip check`, quota par visiteur, logs sans adresse IP ni jeton.
+- **Preuve du piège du proxy**, sur deux branches temporaires supprimées depuis : sans les deux drapeaux, le visiteur B est refusé car le quota est partagé. Avec `--forwarded-allow-ips '*'`, une adresse usurpée contourne le quota. **Les deux configurations cassées font échouer le test.**
+- Déploiement en une commande réussi deux fois de suite, la seconde sur une base déjà remplie.
+
+### Limites
+
+- Jamais lancé sur un vrai VPS, ni avec un vrai certificat Let’s Encrypt.
+- Le retour arrière est écrit mais n’a pas été testé entre deux versions réellement différentes. La tâche `cron` non plus.
+- Pas de politique de sécurité de contenu (CSP).
+- Les sauvegardes restent sur le VPS tant que tu n’as pas choisi où les copier.
+
 ## 11 novembre 2026 : Tests frontend et accessibilité
 
 Branche `t4-tests`, partie de `t4-outillage` (voir plus bas).
