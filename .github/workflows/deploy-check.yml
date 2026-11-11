@@ -1,0 +1,55 @@
+name: Déploiement à blanc
+# Builds and starts the production stack on the runner, with DOMAIN=localhost, then tests it.
+# Nothing is deployed anywhere: everything disappears with the runner.
+on:
+  push:
+    paths: &paths
+      - deploy/**
+      - compose.prod.yaml
+      - backend/Dockerfile
+      - backend/.dockerignore
+      - backend/migrations/**
+      - backend/requirements.lock
+      - frontend/Dockerfile
+      - frontend/nginx.conf
+      - frontend/package-lock.json
+      - .dockerignore
+      - .github/workflows/deploy-check.yml
+  pull_request:
+    paths: *paths
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BACKUP_DIR: ${{ github.workspace }}/../sauvegardes
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fichier d'environnement jetable
+        run: |
+          umask 077
+          {
+            echo DOMAIN=localhost
+            echo ACME_EMAIL=test@example.org
+            echo POSTGRES_USER=runaway
+            echo POSTGRES_DB=runaway
+            echo "POSTGRES_PASSWORD=$(openssl rand -hex 32)"
+            echo RATE_LIMIT_CREATIONS_PER_IP=3
+          } > .env.prod
+      - name: Déploiement en une commande
+        run: deploy/deploy.sh "$GITHUB_SHA"
+      - name: Vérification de la pile
+        run: RUNAWAY_VERSION="$(git rev-parse --short HEAD)" deploy/test-stack.sh
+      - name: Cycle sauvegarde et restauration
+        run: deploy/test-backup-restore.sh
+      - name: Second déploiement sur une base déjà remplie
+        run: deploy/deploy.sh "$GITHUB_SHA"
+      - name: Journaux en cas d'échec
+        if: failure()
+        run: docker compose --env-file .env.prod -f compose.prod.yaml logs --no-color --tail=80
+      - name: Nettoyage
+        if: always()
+        run: docker compose --env-file .env.prod -f compose.prod.yaml down -v

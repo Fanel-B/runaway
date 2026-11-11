@@ -1,0 +1,7 @@
+# Context of the frontend image (the repository root). Everything out, then the few files it needs.
+*
+!frontend/
+!JOURNAL_DES_MODIFICATIONS.md
+frontend/node_modules/
+frontend/dist/
+frontend/.env*
