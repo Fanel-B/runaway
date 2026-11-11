@@ -32,14 +32,15 @@ function checkDraft(draft) {
 }
 
 function Conclusion({ scenario }) {
-  if (scenario.within_budget === true) {
+  // No verdict on an incomplete budget, whatever the data says.
+  if (scenario.complete && scenario.within_budget === true) {
     return (
       <p className="status status-ok">
         <Icon name="check" size={16} /> Dans le plafond
       </p>
     );
   }
-  if (scenario.within_budget === false) {
+  if (scenario.complete && scenario.within_budget === false) {
     return (
       <p className="status status-danger">
         <Icon name="alert" size={16} /> Au-dessus du plafond

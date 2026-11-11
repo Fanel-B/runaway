@@ -51,6 +51,8 @@ jobs:
       - run: npm ci
       - name: Lint (bloquant)
         run: npm run lint
+      - name: Tests frontend (bloquant)
+        run: npm run test
       - run: npm run build
       - name: Audit des dépendances (avertissement seulement)
         # Never fails the job: a finding becomes a warning annotation to read.
