@@ -13,6 +13,9 @@ class Trip(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Refreshed at most once a day by reads; the retention purge relies on it.
+    last_opened_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True, default=lambda: datetime.now(timezone.utc))
     read_token_hash: Mapped[str] = mapped_column(String(64))
     # NULL for trips created before editing existed: they stay read-only.
     edit_token_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)

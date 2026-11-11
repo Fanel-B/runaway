@@ -1,0 +1,7 @@
+# Generated or managed by tools
+frontend/dist/
+frontend/node_modules/
+frontend/package-lock.json
+backend/
+.venv/
+*.db

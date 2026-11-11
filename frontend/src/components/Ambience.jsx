@@ -20,10 +20,18 @@ const STORAGE_KEY = 'runaway.ambiance';
 
 export function useAmbiencePaused() {
   const [paused, setPaused] = useState(() => {
-    try { return localStorage.getItem(STORAGE_KEY) === 'pause'; } catch { return false; }
+    try {
+      return localStorage.getItem(STORAGE_KEY) === 'pause';
+    } catch {
+      return false;
+    }
   });
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, paused ? 'pause' : 'on'); } catch { /* storage unavailable */ }
+    try {
+      localStorage.setItem(STORAGE_KEY, paused ? 'pause' : 'on');
+    } catch {
+      /* storage unavailable */
+    }
   }, [paused]);
   return [paused, setPaused];
 }
@@ -62,13 +70,17 @@ function Particles({ items, kind, render }) {
   return (
     <div className={`ambience-particles ${kind}`}>
       {items.map((p, i) => (
-        <span key={i} className={`particle tone-${p.tone}`} style={{
-          left: p.left,
-          '--size': p.size,
-          '--duration': `${(kind === 'leaves' ? 13 : 10) + p.duration * 12}s`,
-          '--delay': `${-p.delay * 24}s`,
-          '--drift': `${p.drift * 30}vw`,
-        }}>
+        <span
+          key={i}
+          className={`particle tone-${p.tone}`}
+          style={{
+            left: p.left,
+            '--size': p.size,
+            '--duration': `${(kind === 'leaves' ? 13 : 10) + p.duration * 12}s`,
+            '--delay': `${-p.delay * 24}s`,
+            '--drift': `${p.drift * 30}vw`,
+          }}
+        >
           <span className="particle-inner">{render(i)}</span>
         </span>
       ))}
@@ -85,7 +97,11 @@ function wavePath(height, amplitude, wavelength, periods) {
 }
 
 function Waves() {
-  const layers = [['back', 50, 720], ['mid', 36, 480], ['front', 26, 360]];
+  const layers = [
+    ['back', 50, 720],
+    ['mid', 36, 480],
+    ['front', 26, 360],
+  ];
   return (
     <div className="ambience-waves">
       {layers.map(([name, amplitude, wavelength]) => (
@@ -111,9 +127,15 @@ function Sun() {
         <circle cx="200" cy="200" r="150" className="sun-halo" />
         <circle cx="200" cy="200" r="104" className="sun-core" />
       </svg>
-      <Particles items={SPARKS} kind="sparks" render={() => (
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z" /></svg>
-      )} />
+      <Particles
+        items={SPARKS}
+        kind="sparks"
+        render={() => (
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z" />
+          </svg>
+        )}
+      />
     </>
   );
 }
@@ -123,9 +145,21 @@ export function Ambience({ mood, paused }) {
     <div className={`ambience ambience-${mood}`} data-paused={paused || undefined} aria-hidden="true">
       {mood === 'vagues' && <Waves />}
       {mood === 'feuilles' && <Particles items={LEAVES} kind="leaves" render={() => <Leaf />} />}
-      {mood === 'neige' && <Particles items={FLAKES} kind="snow" render={i => (i % 4 ? <i className="flake-dot" /> : (
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" /></svg>
-      ))} />}
+      {mood === 'neige' && (
+        <Particles
+          items={FLAKES}
+          kind="snow"
+          render={i =>
+            i % 4 ? (
+              <i className="flake-dot" />
+            ) : (
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" />
+              </svg>
+            )
+          }
+        />
+      )}
       {mood === 'soleil' && <Sun />}
     </div>,
     document.body,

@@ -30,7 +30,11 @@ export function getTrip(id) {
 export function rememberTrip(entry) {
   const entries = readAll();
   const previous = entries.find(item => item.id === entry.id) || {};
-  const merged = { ...previous, ...Object.fromEntries(Object.entries(entry).filter(([, v]) => v != null)), seenAt: new Date().toISOString() };
+  const merged = {
+    ...previous,
+    ...Object.fromEntries(Object.entries(entry).filter(([, v]) => v != null)),
+    seenAt: new Date().toISOString(),
+  };
   return writeAll([merged, ...entries.filter(item => item.id !== entry.id)].slice(0, 20));
 }
 
