@@ -50,7 +50,7 @@ Fichiers : `frontend/src/styles/base.css`, `screens.css`, `frontend/src/App.jsx`
 - `npm run lint` et `npm run build` : réussis.
 - Mesures dans Chrome : 2 175 textes, 21 états, axe-core **0 violation**, 236 arrêts de focus, 18 écrans sans débordement à 390, 768 et 1440 px.
 - Parcours navigateur complet : **30/30**, avec l’interface et l’API sur deux origines.
-- `pytest` : résultat dans l’entrée de la partie déploiement, juste au-dessus une fois fusionnée, et dans la CI de la PR.
+- `pytest` : 67 réussis (le backend n’est pas touché par cette partie).
 
 ### Limites
 
