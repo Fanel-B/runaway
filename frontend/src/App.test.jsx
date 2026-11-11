@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { StrictMode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
@@ -76,6 +77,18 @@ describe('no page is blank', () => {
     );
     expect(screen.getByRole('button')).toBeInTheDocument();
     expect(document.body.textContent.trim()).not.toBe('');
+  });
+});
+
+describe('focus on load', () => {
+  it('leaves the first Tab to the skip link, even in StrictMode', () => {
+    window.history.replaceState(null, '', '/');
+    render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    );
+    expect(document.activeElement).toBe(document.body);
   });
 });
 

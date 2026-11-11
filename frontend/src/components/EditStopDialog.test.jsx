@@ -65,6 +65,35 @@ describe('the blank page regression', () => {
   });
 });
 
+describe('keyboard focus', () => {
+  it('follows each step instead of falling out of the dialog', async () => {
+    const user = userEvent.setup();
+    renderDialog(target);
+    await user.type(screen.getByLabelText('Nom'), ' sud');
+    await user.click(screen.getByRole('button', { name: 'Comparer les changements' }));
+    expect(screen.getByRole('table', { name: 'Avant et après' })).toHaveFocus();
+    await user.click(screen.getByRole('button', { name: 'Revenir à la saisie' }));
+    expect(screen.getByLabelText('Nom')).toHaveFocus();
+  });
+
+  it('does not disable the focused button while saving', async () => {
+    const user = userEvent.setup();
+    let finish;
+    const mutate = vi.fn(() => new Promise(resolve => (finish = resolve)));
+    renderDialog(target, { mutate });
+    await user.type(screen.getByLabelText('Nom'), ' sud');
+    await user.click(screen.getByRole('button', { name: 'Comparer les changements' }));
+    const apply = screen.getByRole('button', { name: 'Appliquer' });
+    await user.click(apply);
+    const busy = screen.getByRole('button', { name: 'Enregistrement…' });
+    expect(busy).not.toBeDisabled();
+    expect(busy).toHaveFocus();
+    await user.click(busy);
+    expect(mutate).toHaveBeenCalledTimes(1);
+    finish({});
+  });
+});
+
 describe('editing', () => {
   it('refuses to compare without a change', () => {
     renderDialog(target);

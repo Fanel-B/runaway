@@ -107,6 +107,7 @@ function OrganizerKey({ trip, editToken, onUnlocked }) {
 
   async function unlock(event) {
     event.preventDefault();
+    if (busy || !candidate.trim()) return;
     setError('');
     setBusy(true);
     try {
@@ -142,7 +143,7 @@ function OrganizerKey({ trip, editToken, onUnlocked }) {
           <Icon name="alert" size={16} /> {error}
         </p>
       )}
-      <button type="submit" className="btn btn-small btn-ghost" disabled={busy || !candidate.trim()}>
+      <button type="submit" className="btn btn-small btn-ghost" aria-disabled={busy || !candidate.trim()}>
         {busy ? 'Vérification…' : 'Activer l’édition'}
       </button>
     </form>
@@ -164,6 +165,7 @@ function DeleteTrip({ trip, editToken, onDeleted }) {
   }
 
   async function confirm() {
+    if (busy) return;
     setBusy(true);
     setError('');
     try {
@@ -215,7 +217,8 @@ function DeleteTrip({ trip, editToken, onDeleted }) {
             type="button"
             className="btn btn-danger"
             onClick={confirm}
-            disabled={!understood || busy}
+            disabled={!understood}
+            aria-disabled={busy}
             aria-busy={busy}
           >
             {busy ? 'Suppression…' : 'Supprimer définitivement'}

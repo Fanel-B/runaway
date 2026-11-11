@@ -2,6 +2,62 @@
 
 Chaque entrée indique ce qui a changé, pourquoi, les fichiers concernés, comment l’essayer, ce qui a **réellement** été vérifié, et les limites qui restent.
 
+## 11 novembre 2026 : Tests frontend et accessibilité
+
+Branche `t4-tests`, partie de `t4-outillage` (voir plus bas).
+
+### Point de départ
+
+Les PR #1, #2 et #3 ont été fusionnées, mais dans l’ordre #1, #2, #3 : `main` ne contient que la tranche 2. Les tranches 3 et 4 sont sur `t3-fiabilisation` et `t4-outillage`, qui ont le même contenu. Pour ne pas repartir d’un code incomplet, le travail part de `t4-outillage`, et la PR #4 remonte les tranches 3 et 4 sur `main`.
+
+### Tests frontend
+
+**Pourquoi :** la CI ne faisait que le lint et le build. Une page blanche serait passée sans être vue.
+
+- Vitest, Testing Library et jsdom. `npm run test` est une étape bloquante de la CI.
+- 81 tests : routes et clé dans le fragment, stockage local corrompu, plein ou indisponible, formats (dont montant inconnu différent de zéro), dialogue de modification (régression de la page blanche), budget (affichage des totaux du serveur, sous-total incomplet jamais présenté comme total), rendu de chaque page, droits visibles dans l’interface.
+- Les fixtures ont des totaux sans rapport avec les lignes : si le frontend recalculait quoi que ce soit, l’affichage serait faux.
+
+**Défauts trouvés par ces tests, et corrigés :**
+
+- Un `localStorage` abîmé (champ d’un mauvais type, date invalide) faisait planter l’accueil. Les entrées sont maintenant nettoyées à la lecture.
+- « Dans le plafond » s’affichait si le serveur l’indiquait, sans vérifier que le budget était complet. L’interface refuse désormais tout verdict sur un budget incomplet. Le serveur ne produit pas ce cas : c’est une protection supplémentaire, sans aucun calcul.
+
+Fichiers : `frontend/vite.config.js`, `frontend/package.json`, `frontend/src/test/`, `frontend/src/App.test.jsx`, `frontend/src/lib/*.test.js`, `frontend/src/components/*.test.jsx`, `frontend/src/lib/storage.js`, `frontend/src/components/Budget.jsx`, `.github/workflows/ci.yml`.
+
+### Accessibilité
+
+Détail complet dans `docs/DIRECTION_ARTISTIQUE.md`, section Accessibilité.
+
+- Placeholders passés de 3,52:1 à 6,39:1 avec un jeton existant. Vague de devant de 5 % à 4 % d’opacité.
+- Le focus clavier ne se perd plus quand un bouton se désactive ou disparaît, ni entre les étapes du dialogue. Il est visible sur les champs de date.
+- Le premier Tab atteint bien le lien d’évitement (le défaut n’existait qu’en développement, à cause de StrictMode).
+- Hiérarchie de titres corrigée dans les onglets, sans effet visuel.
+- **Laissé à ta décision :** le corail sur fonds colorés (4,39 ; 3,82 ; 3,71), en grand texte, conforme au WCAG AA mais sous 4,5:1. Le corriger toucherait à l’identité visuelle.
+
+Fichiers : `frontend/src/styles/base.css`, `screens.css`, `frontend/src/App.jsx`, `frontend/src/components/` (`Budget`, `Carnet`, `EditStopDialog`, `Home`, `Programme`, `TripForm`, `TripView`).
+
+### Pour essayer
+
+1. `cd frontend`, `npm ci`, `npm run test`.
+2. Dans l’application, sans souris : Tab depuis le haut de page, ouvrir un exemple, « Modifier », « Comparer », « Revenir à la saisie » : le focus suit à chaque étape.
+3. Dans les outils du navigateur, écrire `not json` dans la clé `runaway.voyages` du stockage local, puis recharger : l’accueil s’affiche.
+
+### Tests réellement exécutés
+
+- `npm run test` : **81 réussis**. Avant les corrections de focus, 8 passages d’affilée sur les 78 premiers tests pour vérifier leur stabilité.
+- **Contrôle par mutation** : 12 défauts introduits volontairement (garde de page blanche retirée, sous-total présenté comme total, total du groupe recalculé, verdict sur budget incomplet, inconnu affiché comme zéro, champ vide lu comme zéro, stockage non nettoyé ou non protégé, clé en query string ou dans l’adresse de l’API, vue lecture gardant la clé organisateur, suppression proposée à un lecteur) : **12 détectés sur 12**.
+- `npm run lint` et `npm run build` : réussis.
+- Mesures dans Chrome : 2 175 textes, 21 états, axe-core **0 violation**, 236 arrêts de focus, 18 écrans sans débordement à 390, 768 et 1440 px.
+- Parcours navigateur complet : **30/30**, avec l’interface et l’API sur deux origines.
+- `pytest` : résultat dans l’entrée de la partie déploiement, juste au-dessus une fois fusionnée, et dans la CI de la PR.
+
+### Limites
+
+- Pas de lecteur d’écran réel, pas de Safari ni Firefox, pas de téléphone réel.
+- Les scripts de mesure Chrome et de mutation sont restés hors du dépôt.
+- La base locale reste en 0002 : je n’y ai pas touché.
+
 ## 31 octobre 2026 : Tranche 4, outillage frontend
 
 Branche `t4-outillage`, partie de `t3-fiabilisation`. Rien n’a changé dans les tests frontend, l’accessibilité ou le design.

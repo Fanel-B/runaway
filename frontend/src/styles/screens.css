@@ -603,7 +603,7 @@
 }
 .wave-front .wave {
   fill: var(--cobalt);
-  opacity: 0.05;
+  opacity: 0.04;
   animation-duration: 12s;
 }
 @keyframes wave-slide {

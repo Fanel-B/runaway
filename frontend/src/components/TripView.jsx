@@ -275,12 +275,15 @@ export function TripView({ route, onJournal, onDeleted }) {
 
       <div className="tab-panels">
         <section id="panel-programme" role="tabpanel" aria-labelledby="tab-programme" hidden={tab !== 'programme'}>
+          <h2 className="sr-only">Programme</h2>
           <Programme trip={trip} canEdit={canEdit} mutate={mutate} announce={announce} />
         </section>
         <section id="panel-budget" role="tabpanel" aria-labelledby="tab-budget" hidden={tab !== 'budget'}>
+          <h2 className="sr-only">Budget</h2>
           <Budget trip={trip} canEdit={canEdit} mutate={mutate} announce={announce} />
         </section>
         <section id="panel-carnet" role="tabpanel" aria-labelledby="tab-carnet" hidden={tab !== 'carnet'}>
+          <h2 className="sr-only">Carnet</h2>
           <Carnet
             trip={trip}
             readToken={tokens.readToken}

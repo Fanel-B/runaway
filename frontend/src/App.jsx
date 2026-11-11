@@ -14,14 +14,13 @@ export default function App() {
   const [journalOpen, setJournalOpen] = useState(false);
   const [flash, setFlash] = useState('');
   const main = useRef(null);
-  const firstRender = useRef(true);
+  const shownRoute = useRef(route);
 
   // Move focus to the new page so keyboard and screen-reader users start at its top.
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
+    // Compared to the route, not a first-render flag: StrictMode runs effects twice in development.
+    if (shownRoute.current === route) return;
+    shownRoute.current = route;
     main.current?.focus({ preventScroll: true });
   }, [route]);
 
