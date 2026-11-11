@@ -18,12 +18,20 @@ export default function App() {
 
   // Move focus to the new page so keyboard and screen-reader users start at its top.
   useEffect(() => {
-    if (firstRender.current) { firstRender.current = false; return; }
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
     main.current?.focus({ preventScroll: true });
   }, [route]);
 
   function pickInspiration(idea) {
-    setDraft({ departure: idea.departure, destination: idea.destination, style: idea.style, travelers: idea.travelers });
+    setDraft({
+      departure: idea.departure,
+      destination: idea.destination,
+      style: idea.style,
+      travelers: idea.travelers,
+    });
     go('#nouveau');
   }
 
@@ -34,13 +42,24 @@ export default function App() {
 
   return (
     <>
-      <button type="button" className="skip-link" onClick={() => main.current?.focus()}>Aller au contenu</button>
+      <button type="button" className="skip-link" onClick={() => main.current?.focus()}>
+        Aller au contenu
+      </button>
       <Header />
       <main id="contenu" ref={main} tabIndex={-1}>
         <ErrorBoundary key={route.page + (route.id || '')}>
-          {route.page === 'home' && <Home onInspiration={pickInspiration} flash={flash} onFlashDone={() => setFlash('')} />}
+          {route.page === 'home' && (
+            <Home onInspiration={pickInspiration} flash={flash} onFlashDone={() => setFlash('')} />
+          )}
           {route.page === 'new' && <TripForm key={JSON.stringify(draft)} draft={draft} />}
-          {route.page === 'trip' && <TripView key={`${route.id}-${route.readerView}`} route={route} onJournal={() => setJournalOpen(true)} onDeleted={onDeleted} />}
+          {route.page === 'trip' && (
+            <TripView
+              key={`${route.id}-${route.readerView}`}
+              route={route}
+              onJournal={() => setJournalOpen(true)}
+              onDeleted={onDeleted}
+            />
+          )}
           {route.page === 'privacy' && <Privacy />}
         </ErrorBoundary>
       </main>

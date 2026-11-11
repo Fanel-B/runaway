@@ -2,6 +2,44 @@
 
 Chaque entrée indique ce qui a changé, pourquoi, les fichiers concernés, comment l’essayer, ce qui a **réellement** été vérifié, et les limites qui restent.
 
+## 31 octobre 2026 : Tranche 4, outillage frontend
+
+Branche `t4-outillage`, partie de `t3-fiabilisation`. Rien n’a changé dans les tests frontend, l’accessibilité ou le design.
+
+### Changements
+
+- **ESLint 9** avec la configuration recommandée de `@eslint/js`, `eslint-plugin-react` (`recommended` et `jsx-runtime`) et `eslint-plugin-react-hooks` (`recommended-latest`). Fichier : `frontend/eslint.config.js`. Commande : `npm run lint`.
+- Une seule règle désactivée : `react/prop-types`. React 19 ne vérifie plus les `propTypes`, les déclarer serait du code mort.
+- **Prettier 3**, un seul format pour tout le dépôt (`.prettierrc.json` à la racine) : 120 colonnes, guillemets simples, virgules finales, pas de parenthèses autour d’un paramètre unique de fonction fléchée. Le texte Markdown n’est pas rewrappé. Le backend Python, `dist/`, `node_modules/` et `package-lock.json` sont exclus (`.prettierignore`). Commandes : `npm run format` et `npm run format:check`.
+- **CI** : `npm run lint` est une étape bloquante. `npm audit` tourne en avertissement seulement : il ne fait jamais échouer le job, mais laisse une annotation.
+
+### Ce qu’ESLint a signalé, et les corrections
+
+Premier passage : 196 problèmes, dont 188 `react/prop-types` (règle désactivée, voir plus haut). Restaient 8 problèmes, tous corrigés sans changer le comportement :
+
+- 3 × `react-hooks/set-state-in-effect` :
+  - `Budget.jsx` et `EditStopDialog.jsx` : la remise à zéro du brouillon ou du formulaire se fait pendant le rendu quand la donnée source change (forme recommandée par React), au lieu d’un effet ;
+  - `TripView.jsx` : la requête est isolée dans `fetchTrip`, et l’état n’est mis à jour que dans le callback de sa promesse. Le message « clé de lecture manquante » est déduit de l’état des clés au lieu d’être stocké.
+- 1 × `react-hooks/exhaustive-deps` (`Budget.jsx`) : la comparaison « modifié » s’appuie sur la même donnée que ses dépendances.
+- 4 × `no-irregular-whitespace` (`Privacy.jsx`) : les espaces insécables des guillemets sont écrits `&nbsp;`, le rendu est identique.
+
+Les corrections et la configuration sont dans un commit, le reformatage Prettier seul dans un autre (`Formatage Prettier de tout le dépôt`), pour que la relecture reste lisible.
+
+### Tests réellement exécutés
+
+- `npm run lint` : 0 problème. Un fichier contenant volontairement une variable inutilisée fait bien échouer la commande (code de sortie 1), puis il a été supprimé.
+- `npm run format:check` : tous les fichiers conformes.
+- `npm run build` : réussi.
+- Parcours navigateur, relancés après les corrections et le reformatage : complet **30/30**, tranche 3 **14/14** (même configuration que dans l’entrée précédente).
+- `pytest` : 67 réussis (le backend n’est pas touché par cette tranche).
+- `npm audit` : 6 vulnérabilités « moderate », toutes dans `minimatch`, tiré par ESLint, donc outillage de développement seulement. `npm audit --omit=dev` : 0. La commande d’avertissement de la CI a été simulée en local : elle affiche l’annotation et sort avec le code 0.
+
+### Limites
+
+- La CI n’a pas pu être observée (pas de CLI `gh`).
+- `format:check` n’est pas dans la CI : la consigne ne demandait que le lint et l’audit. C’est une question ouverte dans `RAPPORT_NUIT.md`.
+- Les règles du compilateur React (`react-hooks` 7) sont récentes : de nouvelles alertes peuvent apparaître lors d’une mise à jour du plugin.
+
 ## 31 octobre 2026 : Tranche 3, API déployable, suppression et conservation
 
 Branche `t3-fiabilisation`, partie de `essai`.
