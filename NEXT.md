@@ -8,8 +8,9 @@ Les PR #1, #2 et #3 sont fusionnées, mais `main` ne contient que la tranche 2 :
 | --- | ------------------------------ | ---------------------------------------------- | ------- |
 | #4  | `t3-fiabilisation` vers `main` | Remonte les tranches 3 et 4, sans code nouveau | Ouverte |
 | #5  | `t4-tests` vers `main`         | Tests frontend et accessibilité                | Ouverte |
+| #6  | `t5-preparation` vers `main`   | Préparation du déploiement, sans déployer      | Ouverte |
 
-**Ordre de fusion : #4, puis #5.** Tant que #4 n’est pas fusionnée, #5 affiche aussi les tranches 3 et 4 dans ses changements. Une fois #4 fusionnée, elle n’affiche que les siens.
+**Ordre de fusion : #4, puis #5, puis #6.** Chaque PR vise `main` et affiche aussi le contenu des précédentes tant qu’elles ne sont pas fusionnées. Une fois celles-ci fusionnées, elle n’affiche que ses propres changements.
 
 ## Méthode
 
@@ -22,6 +23,7 @@ Une branche par tranche, une PR directement vers `main`, plus de branche d’int
 - **Tranche 4, outillage** : ESLint, Prettier, lint bloquant et audit en avertissement dans la CI.
 - **Tests frontend** : 81 tests Vitest bloquants en CI.
 - **Accessibilité** : contrastes mesurés, focus clavier corrigé, détail dans `docs/DIRECTION_ARTISTIQUE.md`.
+- **Préparation du déploiement** : images, compose de production, Caddy, scripts, `docs/DEPLOIEMENT.md`. Testé sur un runner GitHub, cycle sauvegarde et restauration compris. Rien n’est déployé.
 
 Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 
@@ -29,28 +31,31 @@ Détails et tests réellement exécutés : `JOURNAL_DES_MODIFICATIONS.md`.
 
 1. **Migrer la base locale en 0003** (`MISE_A_JOUR_WINDOWS.md`, étape 2). Elle est toujours en 0002 : sans cela, la nouvelle API répond 503.
 2. Fusionner les PR dans l’ordre indiqué plus haut.
+3. Lire `RAPPORT_NUIT.md`.
 
 ## Restant
 
 1. Décider du corail sur fonds colorés (voir `docs/DIRECTION_ARTISTIQUE.md`, section Accessibilité).
-2. Purge planifiée une fois l’hébergement choisi.
-3. Responsable et contact sur la page de confidentialité avant toute mise en ligne.
-4. Quota partagé si l’API tourne en plusieurs instances.
-5. Héberger les polices localement pour ne plus transmettre l’adresse IP à Google.
-6. Historique consultable des révisions.
-7. Révocation et rotation des clés de lecture et d’édition.
-8. Brancher OpenRouter derrière `LLMClient` (clé serveur, limite de coût, timeout).
-9. Tests navigateur et mesures d’accessibilité dans la CI (les scripts restent locaux).
+2. Choisir le domaine, le responsable des données, et où copier les sauvegardes (`docs/DEPLOIEMENT.md`).
+3. Déployer pour de vrai : `deploy/deploy.sh` sur un VPS.
+4. Purge planifiée une fois l’hébergement choisi.
+5. Responsable et contact sur la page de confidentialité avant toute mise en ligne.
+6. Quota partagé si l’API tourne en plusieurs instances.
+7. Héberger les polices localement pour ne plus transmettre l’adresse IP à Google.
+8. Historique consultable des révisions.
+9. Révocation et rotation des clés de lecture et d’édition.
+10. Brancher OpenRouter derrière `LLMClient` (clé serveur, limite de coût, timeout).
+11. Tests navigateur et mesures d’accessibilité dans la CI (les scripts restent locaux).
 
 ## Blocages connus
 
 - Aucun blocage technique.
-- Décisions qui te reviennent : le corail, l’hébergement, la durée de conservation définitive, le contact à publier.
-- Outils absents sur ce poste : Docker et `psql`. PostgreSQL n’est testé que par la CI.
+- Décisions qui te reviennent : le corail, le domaine et l’hébergement, le responsable des données, la copie des sauvegardes, la durée de conservation.
+- Outils absents sur ce poste : Docker, WSL et `psql`. PostgreSQL et la pile de production ne sont testés que par la CI.
 
 ## Prochaine action
 
-Migrer la base locale en 0003, puis fusionner #4 et #5, dans cet ordre.
+Migrer la base locale en 0003, puis fusionner #4, #5 et #6, dans cet ordre, et supprimer les branches `essai`, `t3-fiabilisation`, `t4-outillage`, `t4-tests` et `t5-preparation`.
 
 ## Commandes courtes (PowerShell, depuis `runaway\backend`)
 

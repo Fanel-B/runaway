@@ -1,0 +1,28 @@
+# One domain for the site and the API. HTTPS certificates are obtained and renewed by Caddy.
+# Caddy replaces any X-Forwarded-For sent by the client with the real address: nothing else to set.
+# No "log" directive on purpose: no access log, so no visitor address written to disk.
+{
+	email {$ACME_EMAIL}
+	admin off
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# /api/trips reaches the API as /trips, like the Vite proxy in development.
+	handle_path /api/* {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		reverse_proxy web:8080
+	}
+}

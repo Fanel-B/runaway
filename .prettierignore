@@ -5,3 +5,5 @@ frontend/package-lock.json
 backend/
 .venv/
 *.db
+# Keeps its YAML anchors readable
+.github/workflows/deploy-check.yml

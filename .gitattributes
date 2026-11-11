@@ -1,0 +1,5 @@
+# Shell scripts and the proxy configuration run on Linux, even when edited on Windows.
+*.sh text eol=lf
+deploy/Caddyfile text eol=lf
+deploy/env.prod.example text eol=lf
+frontend/nginx.conf text eol=lf
