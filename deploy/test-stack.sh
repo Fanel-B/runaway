@@ -31,7 +31,7 @@ printf '%s' "$HEADERS" | grep -qi '^server:'; check "pas d'en-tête Server" 1 "$
 
 echo "== Rien d'autre n'est exposé"
 check "API non publiée sur l'hôte" 000 "$(curl -s -m 3 -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/health)"
-check "base non publiée" "" "$(compose port db 5432 2> /dev/null | grep -v '^:0$')"
+timeout 3 bash -c '< /dev/tcp/127.0.0.1/5432' 2> /dev/null; check "base non publiée sur l'hôte" 1 "$?"
 check "base injoignable depuis le réseau public" 1 "$(docker run --rm --network runaway_edge postgres:17-alpine sh -c 'pg_isready -h db -t 3 > /dev/null 2>&1; [ $? -eq 0 ] && echo 0 || echo 1')"
 
 echo "== Utilisateurs non privilégiés"
