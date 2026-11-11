@@ -33,9 +33,12 @@ export function Footer({ onJournal }) {
           Prototype étudiant de préparation de voyages entre amis. Programmes générés par un simulateur, illustrations
           SVG originales : aucun lieu, horaire ni tarif n’est vérifié.
         </p>
-        <button type="button" className="btn btn-on-dark" onClick={onJournal}>
-          <Icon name="book" /> Journal du projet
-        </button>
+        <div className="footer-actions">
+          <a className="btn btn-on-dark" href="#confidentialite">Confidentialité</a>
+          <button type="button" className="btn btn-on-dark" onClick={onJournal}>
+            <Icon name="book" /> Journal du projet
+          </button>
+        </div>
       </div>
     </footer>
   );

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { api } from '../lib/api.js';
 import { CATEGORIES, dayDate } from '../lib/format.js';
 import { tripHash } from '../lib/route.js';
-import { rememberTrip } from '../lib/storage.js';
+import { forgetTrip, rememberTrip } from '../lib/storage.js';
+import { Dialog } from './Dialog.jsx';
 import { Icon } from './Icon.jsx';
 
 function downloadJson(trip) {
@@ -101,7 +102,70 @@ function OrganizerKey({ trip, editToken, onUnlocked }) {
   );
 }
 
-export function Carnet({ trip, readToken, editToken, onJournal, onUnlocked, onPrint }) {
+function DeleteTrip({ trip, editToken, onDeleted }) {
+  const [open, setOpen] = useState(false);
+  const [understood, setUnderstood] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const destination = trip.preferences.destination;
+
+  function close() {
+    if (busy) return;
+    setOpen(false);
+    setUnderstood(false);
+    setError('');
+  }
+
+  async function confirm() {
+    setBusy(true);
+    setError('');
+    try {
+      await api(`/trips/${trip.id}`, { method: 'DELETE', token: editToken });
+    } catch (e) {
+      // Already gone elsewhere: the end state is the one asked for.
+      if (e.status !== 404) {
+        setError(e.message);
+        setBusy(false);
+        return;
+      }
+    }
+    forgetTrip(trip.id);
+    onDeleted(destination);
+  }
+
+  return (
+    <>
+      <p className="muted">
+        Efface le voyage du serveur pour tout le monde : programme, budget, décisions et liens. Les amis qui ont le lien
+        de lecture ne pourront plus l’ouvrir.
+      </p>
+      <button type="button" className="btn btn-danger" onClick={() => setOpen(true)}>
+        <Icon name="trash" size={16} /> Supprimer ce voyage
+      </button>
+      <Dialog open={open} onClose={close} eyebrow="Action définitive" title={`Supprimer « ${destination} » ?`}>
+        <ul className="danger-list">
+          <li>Le programme, le budget et les décisions seront effacés du serveur.</li>
+          <li>Le lien de lecture et la clé organisateur ne fonctionneront plus, pour personne.</li>
+          <li>Il n’existe aucune copie de secours : <strong>impossible d’annuler</strong>.</li>
+        </ul>
+        <p className="fine">Pour garder une trace, faites d’abord un export JSON depuis cet onglet.</p>
+        <label className="check">
+          <input type="checkbox" checked={understood} onChange={e => setUnderstood(e.target.checked)} disabled={busy} />
+          <span>Je comprends que la suppression est définitive.</span>
+        </label>
+        {error && <p className="notice notice-danger" role="alert"><Icon name="alert" /> <span>{error}</span></p>}
+        <div className="dialog-actions">
+          <button type="button" className="btn btn-ghost" onClick={close} disabled={busy}>Annuler</button>
+          <button type="button" className="btn btn-danger" onClick={confirm} disabled={!understood || busy} aria-busy={busy}>
+            {busy ? 'Suppression…' : 'Supprimer définitivement'}
+          </button>
+        </div>
+      </Dialog>
+    </>
+  );
+}
+
+export function Carnet({ trip, readToken, editToken, onJournal, onUnlocked, onPrint, onDeleted }) {
   const [copied, setCopied] = useState('');
   const shareUrl = `${window.location.origin}${window.location.pathname}${tripHash(trip.id, readToken, true)}`;
   const decisions = trip.itinerary.days.flatMap(day => day.stops.filter(stop => stop.locked).map(stop => ({ day, stop })));
@@ -176,9 +240,21 @@ export function Carnet({ trip, readToken, editToken, onJournal, onUnlocked, onPr
           <div><dt>Générateur</dt><dd>{trip.generator === 'exemple' ? 'Jeu d’exemple fictif' : `${trip.generator} (simulé)`}</dd></div>
           <div><dt>Lieux</dt><dd>Non vérifiés, aucune carte</dd></div>
           <div><dt>Votre accès</dt><dd>{editToken ? 'Organisateur' : 'Lecture seule'}</dd></div>
+          <div><dt>Conservation</dt><dd>Supprimable après {trip.retention_months} mois sans ouverture</dd></div>
         </dl>
-        <button type="button" className="btn btn-small btn-ghost" onClick={onJournal}><Icon name="book" size={16} /> Ouvrir le journal du projet</button>
+        <div className="inline-actions">
+          <button type="button" className="btn btn-small btn-ghost" onClick={onJournal}><Icon name="book" size={16} /> Ouvrir le journal du projet</button>
+          <a className="btn btn-small btn-ghost" href="#confidentialite">Données et confidentialité</a>
+        </div>
       </section>
+
+      {editToken && (
+        <section className="carnet-danger" aria-labelledby="danger-title">
+          <p className="eyebrow">Zone sensible</p>
+          <h3 id="danger-title" className="display-xs">Supprimer le voyage</h3>
+          <DeleteTrip trip={trip} editToken={editToken} onDeleted={onDeleted} />
+        </section>
+      )}
     </div>
   );
 }

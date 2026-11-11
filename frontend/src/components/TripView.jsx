@@ -54,7 +54,7 @@ function Cover({ trip, canEdit, mood, paused, onTogglePause }) {
   );
 }
 
-export function TripView({ route, onJournal }) {
+export function TripView({ route, onJournal, onDeleted }) {
   const [tokens, setTokens] = useState(() => resolveTokens(route));
   const [trip, setTrip] = useState(null);
   const [error, setError] = useState(null);
@@ -81,7 +81,7 @@ export function TripView({ route, onJournal }) {
       rememberTrip({ id: result.id, readToken: current.readToken, destination: result.preferences.destination,
         start: result.preferences.start_date, end: result.preferences.end_date, example: result.is_example });
     } catch (e) {
-      setError(e.status === 404 ? 'Voyage introuvable : le lien est peut-être incomplet ou la clé incorrecte.' : e.message);
+      setError(e.status === 404 ? 'Voyage introuvable : le lien est peut-être incomplet, la clé incorrecte, ou le voyage a été supprimé.' : e.message);
     }
   }, [route]);
 
@@ -176,7 +176,7 @@ export function TripView({ route, onJournal }) {
         </section>
         <section id="panel-carnet" role="tabpanel" aria-labelledby="tab-carnet" hidden={tab !== 'carnet'}>
           <Carnet trip={trip} readToken={tokens.readToken} editToken={canEdit ? tokens.editToken : null}
-            onJournal={onJournal} onUnlocked={load} onPrint={() => window.print()} />
+            onJournal={onJournal} onUnlocked={load} onPrint={() => window.print()} onDeleted={onDeleted} />
         </section>
       </div>
       <PrintSheet trip={trip} />

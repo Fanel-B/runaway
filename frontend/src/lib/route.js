@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 function parse() {
   const raw = window.location.hash.slice(1);
   if (raw === 'nouveau') return { page: 'new' };
+  if (raw === 'confidentialite') return { page: 'privacy' };
   const params = new URLSearchParams(raw);
   if (params.get('trip')) {
     return { page: 'trip', id: params.get('trip'), key: params.get('key'), readerView: params.get('vue') === 'lecture' };

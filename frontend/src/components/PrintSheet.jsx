@@ -14,12 +14,12 @@ export function PrintSheet({ trip }) {
       <p className="print-note">Programme simulé : aucun lieu, horaire ni tarif vérifié. Révision n° {trip.revision}.</p>
       {trip.itinerary.days.map(day => (
         <section key={day.number} className="print-day">
-          <h2>Jour {day.number} · {dayDate(p.start_date, day.number)} — {day.title}</h2>
+          <h2>Jour {day.number} · {dayDate(p.start_date, day.number)} · {day.title}</h2>
           <ul>
             {day.stops.map((stop, i) => (
               <li key={i}>
                 <strong>{stop.moment ? `${MOMENT_LABELS[stop.moment]} · ` : ''}{stop.name}</strong> ({CATEGORIES[stop.category]}, {stop.city})
-                {stop.locked ? ' — on garde' : ''}{stop.needs_review ? ' — coûts et trajets à revoir' : ''}
+                {stop.locked ? ' (on garde)' : ''}{stop.needs_review ? ' (coûts et trajets à revoir)' : ''}
                 <br />{stop.description}
               </li>
             ))}

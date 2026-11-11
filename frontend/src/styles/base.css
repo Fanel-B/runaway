@@ -96,6 +96,8 @@ code { font-family: ui-monospace, 'Cascadia Code', Consolas, monospace; font-siz
 .btn-quiet:hover:not(:disabled) { background: rgba(24, 57, 47, 0.14); }
 .btn-on-dark { background: transparent; border-color: var(--cream); color: var(--cream); }
 .btn-on-dark:hover:not(:disabled) { background: var(--cream); color: var(--ink); }
+.btn-danger { background: var(--danger-ink); color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #7A140D; }
 .btn-small { min-height: 44px; padding: 8px 16px; font-size: 0.9rem; }
 .btn-block { width: 100%; }
 .icon-button {
@@ -171,6 +173,9 @@ input::placeholder, textarea::placeholder { color: #7A8a83; }
 .tag-locked { background: var(--ink); color: var(--cream); border-color: var(--ink); }
 .tag-review { background: var(--warn-bg); color: var(--warn-ink); border: 1.5px dashed currentColor; }
 .unknown { font-style: italic; color: var(--unknown-ink); }
+
+.check { display: flex; gap: var(--s-3); align-items: center; min-height: 44px; margin: var(--s-4) 0; font-weight: 600; cursor: pointer; }
+.check input { width: 22px; height: 22px; accent-color: var(--danger-ink); flex: none; }
 
 /* ---------- Dialog ---------- */
 .dialog {
