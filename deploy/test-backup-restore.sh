@@ -10,7 +10,7 @@ compose() { docker compose --env-file "$ENV_FILE" -f compose.prod.yaml "$@"; }
 sql() { compose exec -T db sh -c 'psql -X -A -t -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB"' <<< "$1"; }
 fingerprint() { sql "SELECT count(*) || ' ' || coalesce(md5(string_agg(t::text, '|' ORDER BY id)), 'vide') FROM trips t;"; }
 # A client inside the edge network, with its own address, seen by the proxy like a visitor.
-client() { local ip="$1"; shift; docker run --rm --network runaway_edge --ip "$ip" --add-host "localhost:172.30.0.10" curlimages/curl:latest --silent --insecure --max-time 20 "$@"; }
+client() { local ip="$1"; shift; docker run --rm --network runaway_edge --ip "$ip" curlimages/curl:latest --resolve localhost:443:172.30.0.10 --silent --insecure --max-time 20 "$@"; }
 
 : "${BACKUP_DIR:?Définir BACKUP_DIR}"
 export BACKUP_DIR

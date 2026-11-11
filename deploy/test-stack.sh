@@ -11,7 +11,7 @@ check() { # label expected actual
 }
 curl_in() { # network ip [host mapping is localhost -> proxy] curl arguments
   local network="$1" ip="$2"; shift 2
-  docker run --rm --network "$network" --ip "$ip" --add-host "localhost:172.30.0.10" curlimages/curl:latest --silent --insecure --max-time 20 "$@"
+  docker run --rm --network "$network" --ip "$ip" curlimages/curl:latest --resolve localhost:443:172.30.0.10 --silent --insecure --max-time 20 "$@"
 }
 create() { # ip [extra curl arguments]
   local ip="$1"; shift
