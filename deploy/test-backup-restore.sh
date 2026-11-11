@@ -81,4 +81,4 @@ echo "Lecture avec l'ancienne clé après restauration : $STATUS"
 [ "$STATUS" = "200" ] || { echo "ÉCHEC : attendu 200." >&2; exit 1; }
 
 echo
-echo "RÉSULTAT : $CREATED voyages, sauvegarde de $SIZE octets en $BACKUP_MS ms, restauration en $RESTORE_MS ms, empreinte identique ($AFTER)."
+echo "RÉSULTAT : ${AFTER%% *} voyages en base ($CREATED créés par ce test), sauvegarde de $SIZE octets en $BACKUP_MS ms, restauration en $RESTORE_MS ms, empreinte identique ($AFTER)."
